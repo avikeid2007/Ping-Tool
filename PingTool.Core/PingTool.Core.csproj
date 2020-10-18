@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>PingTool.Core</RootNamespace>
+  </PropertyGroup>
+
+   <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+
+   <ItemGroup>
+     <PackageReference Include="Microsoft.Identity.Client" Version="4.18.0" />
+     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.7.0" />
+   </ItemGroup>
+</Project>

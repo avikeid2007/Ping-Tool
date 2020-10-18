@@ -1,0 +1,112 @@
+﻿<Page
+    x:Class="PingTool.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helper="using:PingTool.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Style="{StaticResource PageStyle}"
+    xmlns:xaml="using:Windows.UI.Xaml"
+    xmlns:converters="using:Microsoft.Toolkit.Uwp.UI.Converters"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <helper:EnumToBooleanConverter x:Key="EnumToBooleanConverter" EnumType="ElementTheme" />
+        <converters:BoolToVisibilityConverter x:Name="ReverseBoolToVisibility" FalseValue="Visible" TrueValue="Collapsed" />
+        <converters:BoolNegationConverter x:Name="BoolNegationConverter" />
+    </Page.Resources>
+    <Grid Margin="{StaticResource MediumLeftRightMargin}">
+        <StackPanel
+            x:Name="ContentArea">
+            <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
+                <TextBlock x:Uid="Settings_Theme" />
+
+                <StackPanel Margin="{StaticResource XSmallTopMargin}">
+                    <RadioButton 
+                        x:Uid="Settings_Theme_Light"
+                        Checked="ThemeChanged_CheckedAsync" 
+                        IsChecked="{x:Bind ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Light, Mode=OneWay}"
+                        FontSize="15"
+                        GroupName="AppTheme" >
+                        <RadioButton.CommandParameter>
+                            <xaml:ElementTheme>Light</xaml:ElementTheme>
+                        </RadioButton.CommandParameter> 
+                    </RadioButton>
+                    <RadioButton 
+                        x:Uid="Settings_Theme_Dark"
+                        Checked="ThemeChanged_CheckedAsync" 
+                        IsChecked="{x:Bind ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Dark, Mode=OneWay}"
+                        FontSize="15"
+                        GroupName="AppTheme">
+                        <RadioButton.CommandParameter>
+                            <xaml:ElementTheme>Dark</xaml:ElementTheme>
+                        </RadioButton.CommandParameter>
+                    </RadioButton>
+                    <RadioButton 
+                        x:Uid="Settings_Theme_Default"
+                        Checked="ThemeChanged_CheckedAsync"
+                        IsChecked="{x:Bind ElementTheme, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter=Default, Mode=OneWay}"
+                        FontSize="15"
+                        GroupName="AppTheme">
+                        <RadioButton.CommandParameter>
+                            <xaml:ElementTheme>Default</xaml:ElementTheme>
+                        </RadioButton.CommandParameter>
+                    </RadioButton>
+                </StackPanel>
+            </StackPanel>
+
+            <TextBlock
+                    x:Uid="Settings_User"
+                    Style="{ThemeResource SubtitleTextBlockStyle}" />
+
+                <StackPanel
+                    Margin="{StaticResource SmallTopMargin}"
+                    Visibility="{x:Bind IsLoggedIn, Mode=OneWay}"
+                    Orientation="Horizontal">
+                    <Ellipse Width="64" Height="64">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{x:Bind User.Photo, Mode=OneWay}" Stretch="UniformToFill" />
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <StackPanel Margin="{StaticResource SmallLeftMargin}">
+                        <TextBlock
+                            Text="{x:Bind User.Name, Mode=OneWay}"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                        <TextBlock
+                            Text="{x:Bind User.UserPrincipalName, Mode=OneWay}"
+                            Margin="{StaticResource XSmallTopMargin}"
+                            Style="{ThemeResource BodyTextBlockStyle}" />
+                    </StackPanel>
+                </StackPanel>
+                <HyperlinkButton
+                    x:Uid="Settings_LogOut"
+                    Click="OnLogOut"
+                    IsEnabled="{x:Bind IsBusy, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                    Visibility="{x:Bind IsLoggedIn, Mode=OneWay}"
+                    Margin="{StaticResource XSmallTopMargin}" />
+                <TextBlock
+                    x:Uid="Settings_NoUserLoggedIn"
+                    Margin="{StaticResource XSmallTopMargin}"
+                    Style="{ThemeResource BodyTextBlockStyle}"
+                    Visibility="{x:Bind IsLoggedIn, Mode=OneWay, Converter={StaticResource ReverseBoolToVisibility}}" />
+                <HyperlinkButton
+                    x:Uid="Settings_LogIn"
+                    Click="OnLogIn"
+                    IsEnabled="{x:Bind IsBusy, Mode=OneWay, Converter={StaticResource BoolNegationConverter}}"
+                    Visibility="{x:Bind IsLoggedIn, Mode=OneWay, Converter={StaticResource ReverseBoolToVisibility}}"
+                    Margin="{StaticResource XSmallTopMargin}" />
+
+            <TextBlock x:Uid="Settings_About" Style="{ThemeResource SubtitleTextBlockStyle}" />
+
+            <StackPanel Margin="{StaticResource XSmallTopMargin}">
+                <TextBlock Style="{ThemeResource BodyTextBlockStyle}" Text="{x:Bind VersionDescription, Mode=OneWay}" />
+                <TextBlock
+                    x:Uid="Settings_AboutDescription"
+                    Margin="{StaticResource XSmallTopMargin}"
+                    Style="{ThemeResource BodyTextBlockStyle}" />
+
+                <HyperlinkButton x:Uid="Settings_PrivacyTermsLink" Margin="{StaticResource XSmallTopMargin}" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>
