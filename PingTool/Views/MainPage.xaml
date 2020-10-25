@@ -2,17 +2,165 @@
     x:Class="PingTool.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="using:PingTool.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
-    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
-        <Grid
-            Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
-            <!--
-                The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content. 
-                Place your content here.
-            -->
+    <Page.Resources>
+        <conv:TextColorConverter x:Key="TextColorConverter" />
+    </Page.Resources>
+    <Grid x:Name="ContentArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox
+                Grid.Column="1"
+                Width="200"
+                Margin="{StaticResource MediumLeftMargin}"
+                VerticalAlignment="Center"
+                PlaceholderText="Ping Host Ip/Address"
+                Text="{Binding GuidText}" />
+            <Button
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Command="{Binding StartCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Play" />
+                    <TextBlock
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        FontSize="{StaticResource SmallFontSize}"
+                        Text="Start" />
+                </StackPanel>
+            </Button>
+            <Button
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Command="{Binding StopCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="Clear" />
+                    <TextBlock
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        FontSize="{StaticResource SmallFontSize}"
+                        Text="Clear" />
+                </StackPanel>
+            </Button>
+            <Button
+                Grid.Column="4"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Command="{Binding ExportCommand}">
+                <StackPanel Orientation="Horizontal">
+                    <SymbolIcon Symbol="MoveToFolder" />
+                    <TextBlock
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        FontSize="{StaticResource SmallFontSize}"
+                        Text="Export" />
+                </StackPanel>
+            </Button>
         </Grid>
+        <!--<CommandBar
+            Grid.ColumnSpan="2"
+            Background="Transparent"
+            IsOpen="False">
+            <AppBarToggleButton
+                Command="{Binding StartCommand}"
+                Icon="Play"
+                Label="Play" />
+            <AppBarToggleButton
+                Command="{Binding StopCommand}"
+                Icon="Stop"
+                Label="Stop" />
+
+        </CommandBar>-->
+        <Grid Grid.Row="1" Margin="{StaticResource SmallLeftTopRightBottomMargin}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock FontSize="{StaticResource LargeFontSize}" Text="IP Address" />
+
+            <TextBlock
+                Grid.Column="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text=":" />
+            <TextBlock
+                Grid.Column="2"
+                d:Text="192.168.1.1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="{Binding IPAddress}" />
+            <TextBlock
+                Grid.Row="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="Profile" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text=":" />
+            <TextBlock
+                Grid.Row="2"
+                Grid.Column="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="{Binding Profile}" />
+
+
+        </Grid>
+        <ListView
+            Grid.Row="1"
+            Grid.Column="1"
+            Grid.ColumnSpan="3"
+            ItemsSource="{Binding PingCollaction, Mode=OneWay}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock
+                        Margin="0"
+                        FontSize="{StaticResource SemiLargeFontSize}"
+                        Foreground="{Binding Time, Converter={StaticResource TextColorConverter}}"
+                        Text="{Binding Response}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel VerticalAlignment="Top" ItemsUpdatingScrollMode="KeepLastItemInView" />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+        <!--<Button
+            Grid.Row="1"
+            Command="{Binding StartCommand}"
+            Content="Start" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="1"
+            Content="Stop" />
+        <Button
+            Grid.Row="1"
+            Grid.Column="2"
+            Click="Button_Click"
+            Content="Close" />-->
     </Grid>
+
 </Page>
