@@ -1,7 +1,5 @@
-﻿using System;
-
-using Microsoft.UI.Xaml.Controls;
-
+﻿using Microsoft.UI.Xaml.Controls;
+using System;
 using Windows.UI.Xaml;
 
 namespace PingTool.Helpers

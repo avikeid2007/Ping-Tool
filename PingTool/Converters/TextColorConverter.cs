@@ -11,7 +11,7 @@ namespace PingTool.Converters
         {
             if (value is long time)
             {
-                if (time > 0)
+                if (time >= 0)
                 {
                     if (time > 1000)
                     {

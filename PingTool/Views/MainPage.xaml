@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:conv="using:PingTool.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
@@ -28,34 +30,81 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <TextBox
+                x:Name="TxtAddress"
                 Grid.Column="1"
                 Width="200"
                 Margin="{StaticResource MediumLeftMargin}"
                 VerticalAlignment="Center"
                 PlaceholderText="Ping Host Ip/Address"
-                Text="{Binding GuidText}" />
+                Text="{x:Bind ViewModel.HostNameOrAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <i:Interaction.Behaviors>
+                    <ic:EventTriggerBehavior EventName="KeyDown">
+                        <ic:InvokeCommandAction Command="{Binding KeyDownCommand}" />
+                    </ic:EventTriggerBehavior>
+
+                </i:Interaction.Behaviors>
+            </TextBox>
             <Button
                 Grid.Column="2"
                 VerticalAlignment="Center"
                 Background="Transparent"
                 Command="{Binding StartCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Play" />
+                    <SymbolIcon x:Name="StartIcon" />
                     <TextBlock
+                        x:Name="StartTest"
                         Margin="{StaticResource XSmallLeftMargin}"
-                        FontSize="{StaticResource SmallFontSize}"
-                        Text="Start" />
+                        VerticalAlignment="Center"
+                        FontSize="{StaticResource SmallFontSize}" />
+
                 </StackPanel>
+                <i:Interaction.Behaviors>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding IsPingStarted}"
+                        ComparisonCondition="Equal"
+                        Value="true">
+                        <ic:ChangePropertyAction
+                            PropertyName="Symbol"
+                            TargetObject="{Binding ElementName=StartIcon}"
+                            Value="Pause" />
+                        <ic:ChangePropertyAction
+                            PropertyName="Text"
+                            TargetObject="{Binding ElementName=StartTest}"
+                            Value="Pause" />
+                        <ic:ChangePropertyAction
+                            PropertyName="IsEnabled"
+                            TargetObject="{Binding ElementName=TxtAddress}"
+                            Value="false" />
+                    </ic:DataTriggerBehavior>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding IsPingStarted}"
+                        ComparisonCondition="Equal"
+                        Value="false">
+                        <ic:ChangePropertyAction
+                            PropertyName="Symbol"
+                            TargetObject="{Binding ElementName=StartIcon}"
+                            Value="Play" />
+                        <ic:ChangePropertyAction
+                            PropertyName="Text"
+                            TargetObject="{Binding ElementName=StartTest}"
+                            Value="Play" />
+                        <ic:ChangePropertyAction
+                            PropertyName="IsEnabled"
+                            TargetObject="{Binding ElementName=TxtAddress}"
+                            Value="true" />
+                    </ic:DataTriggerBehavior>
+                </i:Interaction.Behaviors>
             </Button>
             <Button
                 Grid.Column="3"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                Command="{Binding StopCommand}">
+                Command="{Binding ClearCommand}">
                 <StackPanel Orientation="Horizontal">
-                    <SymbolIcon Symbol="Clear" />
+                    <SymbolIcon Symbol="ClearSelection" />
                     <TextBlock
                         Margin="{StaticResource XSmallLeftMargin}"
+                        VerticalAlignment="Center"
                         FontSize="{StaticResource SmallFontSize}"
                         Text="Clear" />
                 </StackPanel>
@@ -69,35 +118,23 @@
                     <SymbolIcon Symbol="MoveToFolder" />
                     <TextBlock
                         Margin="{StaticResource XSmallLeftMargin}"
+                        VerticalAlignment="Center"
                         FontSize="{StaticResource SmallFontSize}"
                         Text="Export" />
                 </StackPanel>
             </Button>
         </Grid>
-        <!--<CommandBar
-            Grid.ColumnSpan="2"
-            Background="Transparent"
-            IsOpen="False">
-            <AppBarToggleButton
-                Command="{Binding StartCommand}"
-                Icon="Play"
-                Label="Play" />
-            <AppBarToggleButton
-                Command="{Binding StopCommand}"
-                Icon="Stop"
-                Label="Stop" />
-
-        </CommandBar>-->
         <Grid Grid.Row="1" Margin="{StaticResource SmallLeftTopRightBottomMargin}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBlock FontSize="{StaticResource LargeFontSize}" Text="IP Address" />
@@ -106,25 +143,97 @@
                 Grid.Column="1"
                 FontSize="{StaticResource LargeFontSize}"
                 Text=":" />
-            <TextBlock
-                Grid.Column="2"
-                d:Text="192.168.1.1"
-                FontSize="{StaticResource LargeFontSize}"
-                Text="{Binding IPAddress}" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.IpAddress, Mode=OneWay}" />
+
+                <Button Background="Transparent" Command="{Binding CopyCommand}">
+                    <SymbolIcon Symbol="Copy" />
+                </Button>
+
+            </StackPanel>
+
             <TextBlock
                 Grid.Row="1"
                 FontSize="{StaticResource LargeFontSize}"
-                Text="Profile" />
+                Text="IP Address" />
+
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
                 FontSize="{StaticResource LargeFontSize}"
                 Text=":" />
             <TextBlock
+                Grid.Row="1"
+                Grid.Column="2"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="{x:Bind ViewModel.IpType.ToUpper(), Mode=OneWay}" />
+
+            <TextBlock
+                Grid.Row="2"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="Profile" />
+            <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
                 FontSize="{StaticResource LargeFontSize}"
-                Text="{Binding Profile}" />
+                Text=":" />
+            <StackPanel
+                Grid.Row="2"
+                Grid.Column="2"
+                Orientation="Horizontal">
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.ProfileName, Mode=OneWay}" />
+                <TextBlock
+                    x:Name="ConnectionIcon"
+                    Margin="{StaticResource XSmallLeftMargin}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="{StaticResource SemiLargeFontSize}"
+                    Text="&#xE839;" />
+                <i:Interaction.Behaviors>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding IsWlan}"
+                        ComparisonCondition="Equal"
+                        Value="true">
+                        <ic:ChangePropertyAction
+                            PropertyName="Text"
+                            TargetObject="{Binding ElementName=ConnectionIcon}"
+                            Value="&#xEE77;" />
+                    </ic:DataTriggerBehavior>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding IsWlan}"
+                        ComparisonCondition="Equal"
+                        Value="false">
+                        <ic:ChangePropertyAction
+                            PropertyName="Text"
+                            TargetObject="{Binding ElementName=ConnectionIcon}"
+                            Value="&#xE839;" />
+                    </ic:DataTriggerBehavior>
+                </i:Interaction.Behaviors>
+
+            </StackPanel>
+            <TextBlock
+                Grid.Row="3"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="Data uses(MBs)" />
+            <TextBlock
+                Grid.Row="3"
+                Grid.Column="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text=":" />
+            <StackPanel
+                Grid.Row="3"
+                Grid.Column="2"
+                Orientation="Horizontal">
+
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay}" />
+                <SymbolIcon Symbol="Download" />
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="/" />
+
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalSentBytes, Mode=OneWay}" />
+                <SymbolIcon Symbol="Upload" />
+            </StackPanel>
+
 
 
         </Grid>

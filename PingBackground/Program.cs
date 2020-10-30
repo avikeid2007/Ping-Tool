@@ -29,25 +29,25 @@ namespace PingBackground
                     if (!string.IsNullOrEmpty(HostNameOrAddress))
                     {
                         var reply = await pingSender.SendPingAsync(HostNameOrAddress);
-                        ValueSet request = new ValueSet();
-                        request.Add("host", reply.Address.ToString());
-                        request.Add("time", reply.RoundtripTime);
-                        request.Add("size", reply.Buffer.Length);
-                        request.Add("ttl", reply.Options?.Ttl);
-                        request.Add("response", $"Reply from {reply.Address}: bytes={ reply.Buffer.Length} time={ reply.RoundtripTime}ms TTL={reply.Options?.Ttl}");
-                        await connection.SendMessageAsync(request);
+                        if (reply?.Status == IPStatus.Success)
+                        {
+                            ValueSet request = new ValueSet();
+                            request.Add("host", reply.Address.ToString());
+                            request.Add("time", reply.RoundtripTime);
+                            request.Add("size", reply.Buffer.Length);
+                            request.Add("ttl", reply.Options?.Ttl);
+                            request.Add("response", $"Reply from {reply.Address}: bytes={ reply.Buffer.Length} time={ reply.RoundtripTime}ms TTL={reply.Options?.Ttl}");
+                            await connection.SendMessageAsync(request);
+                        }
+                        else
+                        {
+                            await UnsuccessReply(reply.Status);
+                        }
                     }
                 }
                 catch
                 {
-                    var reply = await pingSender.SendPingAsync(HostNameOrAddress);
-                    ValueSet request = new ValueSet();
-                    request.Add("host", reply.Address.ToString());
-                    request.Add("time", -1);
-                    request.Add("size", 0);
-                    request.Add("ttl", 0);
-                    request.Add("response", "Request timed out.");
-                    await connection.SendMessageAsync(request);
+                    await UnsuccessReply(IPStatus.DestinationUnreachable);
                 }
                 finally
                 {
@@ -55,6 +55,18 @@ namespace PingBackground
                 }
             }
         }
+
+        private static async Task UnsuccessReply(IPStatus iPStatus)
+        {
+            ValueSet request = new ValueSet();
+            request.Add("host", HostNameOrAddress);
+            request.Add("time", -1000);
+            request.Add("size", 0);
+            request.Add("ttl", 0);
+            request.Add("response", iPStatus.ToString());
+            await connection.SendMessageAsync(request);
+        }
+
         private static async Task InitializeAppServiceConnectionAsync()
         {
             connection = new AppServiceConnection
