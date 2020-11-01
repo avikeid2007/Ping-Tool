@@ -7,13 +7,15 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:net="using:System.Net.NetworkInformation"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
     <Page.Resources>
         <conv:TextColorConverter x:Key="TextColorConverter" />
     </Page.Resources>
-    <Grid x:Name="ContentArea">
+    <Grid x:Name="ContentArea" Margin="{StaticResource SmallLeftTopRightBottomMargin}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -124,7 +126,11 @@
                 </StackPanel>
             </Button>
         </Grid>
-        <Grid Grid.Row="1" Margin="{StaticResource SmallLeftTopRightBottomMargin}">
+        <Grid
+            Grid.Row="1"
+            Padding="{StaticResource MediumBottomMargin}"
+            BorderBrush="#ccc"
+            BorderThickness="0,0,0,2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
@@ -137,16 +143,22 @@
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            
             <TextBlock FontSize="{StaticResource LargeFontSize}" Text="IP Address" />
-
             <TextBlock
                 Grid.Column="1"
                 FontSize="{StaticResource LargeFontSize}"
                 Text=":" />
             <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.IpAddress, Mode=OneWay}" />
+                <TextBlock
+                    FontSize="{StaticResource LargeFontSize}"
+                    Text="{x:Bind ViewModel.IpAddress, Mode=OneWay}"
+                    Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}" />
 
-                <Button Background="Transparent" Command="{Binding CopyCommand}">
+                <Button
+                    Background="Transparent"
+                    Command="{Binding CopyCommand}"
+                    Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}">
                     <SymbolIcon Symbol="Copy" />
                 </Button>
 
@@ -166,7 +178,8 @@
                 Grid.Row="1"
                 Grid.Column="2"
                 FontSize="{StaticResource LargeFontSize}"
-                Text="{x:Bind ViewModel.IpType.ToUpper(), Mode=OneWay}" />
+                Text="{x:Bind ViewModel.IpType.ToUpper(), Mode=OneWay}"
+                Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}" />
 
             <TextBlock
                 Grid.Row="2"
@@ -180,7 +193,8 @@
             <StackPanel
                 Grid.Row="2"
                 Grid.Column="2"
-                Orientation="Horizontal">
+                Orientation="Horizontal"
+                Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}">
                 <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.ProfileName, Mode=OneWay}" />
                 <TextBlock
                     x:Name="ConnectionIcon"
@@ -190,6 +204,7 @@
                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                     FontSize="{StaticResource SemiLargeFontSize}"
                     Text="&#xE839;" />
+
                 <i:Interaction.Behaviors>
                     <ic:DataTriggerBehavior
                         Binding="{Binding IsWlan}"
@@ -198,7 +213,11 @@
                         <ic:ChangePropertyAction
                             PropertyName="Text"
                             TargetObject="{Binding ElementName=ConnectionIcon}"
-                            Value="&#xEE77;" />
+                            Value="&#xE701;" />
+                        <ic:ChangePropertyAction
+                            PropertyName="Text"
+                            TargetObject="{Binding ElementName=ConnectionStatusIcon}"
+                            Value="&#xE701;" />
                     </ic:DataTriggerBehavior>
                     <ic:DataTriggerBehavior
                         Binding="{Binding IsWlan}"
@@ -208,6 +227,37 @@
                             PropertyName="Text"
                             TargetObject="{Binding ElementName=ConnectionIcon}"
                             Value="&#xE839;" />
+                        <ic:ChangePropertyAction
+                            PropertyName="Text"
+                            TargetObject="{Binding ElementName=ConnectionStatusIcon}"
+                            Value="&#xE839;" />
+
+                    </ic:DataTriggerBehavior>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding HasInternetAccess}"
+                        ComparisonCondition="Equal"
+                        Value="false">
+                        <ic:ChangePropertyAction
+                            PropertyName="Visibility"
+                            TargetObject="{Binding ElementName=NoConnectionStatusIcon}"
+                            Value="Visible" />
+                        <ic:ChangePropertyAction
+                            PropertyName="Visibility"
+                            TargetObject="{Binding ElementName=ConnectionStatusIcon}"
+                            Value="Collapsed" />
+                    </ic:DataTriggerBehavior>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding HasInternetAccess}"
+                        ComparisonCondition="Equal"
+                        Value="true">
+                        <ic:ChangePropertyAction
+                            PropertyName="Visibility"
+                            TargetObject="{Binding ElementName=NoConnectionStatusIcon}"
+                            Value="Collapsed" />
+                        <ic:ChangePropertyAction
+                            PropertyName="Visibility"
+                            TargetObject="{Binding ElementName=ConnectionStatusIcon}"
+                            Value="Visible" />
                     </ic:DataTriggerBehavior>
                 </i:Interaction.Behaviors>
 
@@ -224,7 +274,8 @@
             <StackPanel
                 Grid.Row="3"
                 Grid.Column="2"
-                Orientation="Horizontal">
+                Orientation="Horizontal"
+                Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}">
 
                 <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay}" />
                 <SymbolIcon Symbol="Download" />
@@ -237,8 +288,163 @@
 
 
         </Grid>
+        <Grid Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Network Status:" />
+            <StackPanel
+                Grid.Row="1"
+                Margin="{StaticResource MediumTopBottomMargin}"
+                Padding="{StaticResource MediumBottomMargin}"
+                BorderBrush="#ccc"
+                BorderThickness="0,0,0,2"
+                Orientation="Horizontal">
+                <TextBlock
+                    x:Name="CurrentPc"
+                    Margin="{StaticResource XSmallLeftMargin}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="80"
+                    Text="&#xEC4E;" />
+                <Border
+                    Width="100"
+                    VerticalAlignment="Center"
+                    BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
+                    BorderThickness="2" />
+                <StackPanel
+                    Margin="{StaticResource XSmallLeftMargin}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <TextBlock
+                        x:Name="ConnectionStatusIcon"
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="36"
+                        Foreground="Green"
+                        Text="&#xE839;" />
+                    <TextBlock
+                        x:Name="NoConnectionStatusIcon"
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="{StaticResource SemiLargeFontSize}"
+                        Foreground="Red"
+                        Text="&#xE894;" />
+                    <TextBlock
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        VerticalAlignment="Center"
+                        Text="{Binding SelectedLocalLAN.Name}"
+                        Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}" />
+                </StackPanel>
+                <Border
+                    Width="100"
+                    Margin="{StaticResource XSmallLeftMargin}"
+                    VerticalAlignment="Center"
+                    BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
+                    BorderThickness="2" />
+                <TextBlock
+                    Margin="{StaticResource XSmallLeftMargin}"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="80"
+                    Text="&#xE774;" />
+
+            </StackPanel>
+            <TextBlock
+                Grid.Row="2"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="Other Network Adapters:" />
+            <GridView
+                x:Name="NetworkConnectionGrid"
+                Grid.Row="3"
+                ItemsSource="{Binding LocalLANCollection}">
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="net:NetworkInterface">
+                        <StackPanel Width="300" Orientation="Horizontal">
+                            <TextBlock
+                                x:Name="LanIcon"
+                                Margin="{StaticResource XSmallLeftMargin}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="80"
+                                Text="&#xEB56;" />
+                            <StackPanel
+                                Margin="{StaticResource XSmallLeftMargin}"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical">
+
+                                <TextBlock
+                                    x:Name="LanName"
+                                    Width="200"
+                                    Text="{x:Bind Name}"
+                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Name="LanDes"
+                                    Width="200"
+                                    FontSize="{StaticResource SmallFontSize}"
+                                    Text="{x:Bind Description}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <i:Interaction.Behaviors>
+                                <ic:DataTriggerBehavior
+                                    Binding="{x:Bind OperationalStatus.ToString()}"
+                                    ComparisonCondition="Equal"
+                                    Value="Up">
+                                    <ic:ChangePropertyAction
+                                        PropertyName="Foreground"
+                                        TargetObject="{Binding ElementName=LanName}"
+                                        Value="{StaticResource SystemAccentColor}" />
+                                    <ic:ChangePropertyAction
+                                        PropertyName="Foreground"
+                                        TargetObject="{Binding ElementName=LanIcon}"
+                                        Value="{StaticResource SystemAccentColor}" />
+                                    <ic:ChangePropertyAction
+                                        PropertyName="Text"
+                                        TargetObject="{Binding ElementName=LanIcon}"
+                                        Value="&#xE839;" />
+                                    <ic:ChangePropertyAction
+                                        PropertyName="Foreground"
+                                        TargetObject="{Binding ElementName=LanDes}"
+                                        Value="{StaticResource SystemAccentColor}" />
+                                </ic:DataTriggerBehavior>
+                                <ic:DataTriggerBehavior
+                                    Binding="{x:Bind Id}"
+                                    ComparisonCondition="Equal"
+                                    Value="{Binding DataContext.CurrentNetworkId, ElementName=NetworkConnectionGrid}">
+                                    <ic:ChangePropertyAction
+                                        PropertyName="Foreground"
+                                        TargetObject="{Binding ElementName=LanName}"
+                                        Value="Green" />
+                                    <ic:ChangePropertyAction
+                                        PropertyName="Foreground"
+                                        TargetObject="{Binding ElementName=LanIcon}"
+                                        Value="Green" />
+                                    <ic:ChangePropertyAction
+                                        PropertyName="Foreground"
+                                        TargetObject="{Binding ElementName=LanDes}"
+                                        Value="Green" />
+                                </ic:DataTriggerBehavior>
+
+                            </i:Interaction.Behaviors>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+        </Grid>
+
         <ListView
             Grid.Row="1"
+            Grid.RowSpan="2"
             Grid.Column="1"
             Grid.ColumnSpan="3"
             ItemsSource="{Binding PingCollaction, Mode=OneWay}">

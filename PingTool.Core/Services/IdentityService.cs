@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using PingTool.Core.Helpers;
+using System;
 using System.Configuration;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-
-using Microsoft.Identity.Client;
-
-using PingTool.Core.Helpers;
 
 namespace PingTool.Core.Services
 {
@@ -87,7 +85,7 @@ namespace PingTool.Core.Services
 
                 return LoginResultType.UnknownError;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return LoginResultType.UnknownError;
             }

@@ -32,9 +32,39 @@ namespace PingTool
         private int _wifiBars;
         private string _hostNameOrAddress;
         private string _ipType;
+        private ObservableCollection<NetworkInterface> _localLANCollection;
+        private NetworkInterface _selectedLocalLAN;
+        private bool _hasInternetAccess;
         public MainViewModel()
         {
-            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
+
+        }
+        public bool HasInternetAccess
+        {
+            get { return _hasInternetAccess; }
+            set
+            {
+                _hasInternetAccess = value;
+                OnPropertyChanged();
+            }
+        }
+        public ObservableCollection<NetworkInterface> LocalLANCollection
+        {
+            get { return _localLANCollection; }
+            set
+            {
+                _localLANCollection = value;
+                OnPropertyChanged();
+            }
+        }
+        public NetworkInterface SelectedLocalLAN
+        {
+            get { return _selectedLocalLAN; }
+            set
+            {
+                _selectedLocalLAN = value;
+                OnPropertyChanged();
+            }
         }
         public string IpType
         {
@@ -141,51 +171,62 @@ namespace PingTool
                 App.AppServiceConnected += MainPage_AppServiceConnected;
                 App.AppServiceDisconnected += MainPage_AppServiceDisconnected;
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+
             }
-            SetNetworkInfo();
+            await SetNetworkInfoAsync();
+            NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
+            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
         }
 
-        private void SetNetworkInfo()
+        private async Task NotifyUI(Action action)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                               () => action());
+        }
+
+        private async Task SetNetworkInfoAsync()
         {
             try
             {
                 var icp = NetworkInformation.GetInternetConnectionProfile();
-                if (icp?.NetworkAdapter == null) return;
-                var hostname =
-                    NetworkInformation.GetHostNames()
+                await NotifyUI(() => LocalLANCollection = new ObservableCollection<NetworkInterface>(NetworkInterface.GetAllNetworkInterfaces()));
+                if (icp?.NetworkAdapter == null)
+                {
+                    await NotifyUI(() => ClearNetworkStatus());
+                    return;
+                }
+                await NotifyUI(() => HasInternetAccess = icp.GetNetworkConnectivityLevel() >= NetworkConnectivityLevel.InternetAccess);
+                var hostname = NetworkInformation.GetHostNames()
                         .FirstOrDefault(
-                            hn =>
-                                hn.IPInformation?.NetworkAdapter != null && hn.IPInformation.NetworkAdapter.NetworkAdapterId
-                                == icp.NetworkAdapter.NetworkAdapterId);
-                var LocalLANColl = NetworkInterface.GetAllNetworkInterfaces();
-                var LocalLAN = LocalLANColl.FirstOrDefault(x => x.Id.ToUpper() == "{" + hostname.IPInformation.NetworkAdapter.NetworkAdapterId.ToString().ToUpper() + "}");
-                IpAddress = hostname?.CanonicalName;
-                IpType = hostname?.Type.ToString();
-                ProfileName = icp.ProfileName;
-                IsWlan = icp.IsWlanConnectionProfile;
-                WifiBars = Convert.ToInt32(icp.GetSignalBars());
-                var ipstats = LocalLAN.GetIPStatistics();
-                TotalReceivedBytes = GetSizeInByte(ipstats.BytesReceived);
-                TotalSentBytes = GetSizeInByte(ipstats.BytesSent);
-                IsSupportIPV6 = LocalLAN.Supports(NetworkInterfaceComponent.IPv6);
+                            hn => hn.IPInformation?.NetworkAdapter != null
+                            && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
+                var CurrentNetworkId = "{" + hostname.IPInformation.NetworkAdapter.NetworkAdapterId.ToString().ToUpper() + "}";
+                await NotifyUI(() => SelectedLocalLAN = LocalLANCollection.FirstOrDefault(x => x.Id.ToUpper() == CurrentNetworkId));
+                await NotifyUI(() => IpAddress = hostname?.CanonicalName);
+                await NotifyUI(() => IpType = hostname?.Type.ToString());
+                await NotifyUI(() => ProfileName = icp.ProfileName);
+                await NotifyUI(() => IsWlan = icp.IsWlanConnectionProfile);
+                await NotifyUI(() => WifiBars = Convert.ToInt32(icp.GetSignalBars()));
+                var ipstats = SelectedLocalLAN.GetIPStatistics();
+                await NotifyUI(() => TotalReceivedBytes = GetSizeInByte(ipstats.BytesReceived));
+                await NotifyUI(() => TotalSentBytes = GetSizeInByte(ipstats.BytesSent));
+                await NotifyUI(() => IsSupportIPV6 = SelectedLocalLAN.Supports(NetworkInterfaceComponent.IPv6));
             }
             catch (Exception ex)
             {
             }
         }
-
-        private void NetworkInformation_NetworkStatusChanged(object sender)
+        private void ClearNetworkStatus()
         {
-            SetNetworkInfo();
+            IpAddress = string.Empty;
+            IpType = string.Empty;
+            ProfileName = string.Empty;
+            HasInternetAccess = false;
         }
-        //private async Task<IEnumerable<DeviceDefinition>> GetConnectedDeviceDefinitionsAsync()
-        //{
-        //    var aqsFilter = "System.Devices.Aep.ProtocolId:=\"{37aba761-2124-454c-8d82-c42962c2de2b}\"";
-
-        //    var deviceInformationCollection = await DeviceInformation.FindAllAsync(aqsFilter);
-        //    var deviceIds = deviceInformationCollection.Select(d => new DeviceDefinition { DeviceId = d.Id, DeviceType = d.Name }).ToList();
-        //    return deviceIds;
-        //}
+        private async void NetworkInformation_NetworkStatusChanged(object sender)
+        {
+            await SetNetworkInfoAsync();
+        }
         private long GetSizeInByte(long bytes)
         {
             return bytes / 1048576;

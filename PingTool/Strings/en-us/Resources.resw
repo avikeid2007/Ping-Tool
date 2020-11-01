@@ -212,4 +212,8 @@
     <value>Log out</value>
     <comment>Settings LogOut user content</comment>
   </data>
+  <data name="Shell_DataUsage.Content" xml:space="preserve">
+    <value>DataUsage</value>
+    <comment>Navigation view item name for DataUsage</comment>
+  </data>
 </root>
