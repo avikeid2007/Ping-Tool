@@ -2,16 +2,161 @@
     x:Class="PingTool.Views.DataUsagePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:chart="using:PingTool.Helpers"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:telerik="using:Telerik.UI.Xaml.Controls.Chart"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
+    <Page.Resources>
+        <chart:PieLabelStrategy x:Key="Strategy">
+            <chart:PieLabelStrategy.Binding>
+                <telerik:PropertyNameDataPointBinding PropertyName="DataType" />
+            </chart:PieLabelStrategy.Binding>
+        </chart:PieLabelStrategy>
+        <telerik:PropertyNameDataPointBinding x:Key="UploadBinding" PropertyName="Upload" />
+        <telerik:PropertyNameDataPointBinding x:Key="DownloadBinding" PropertyName="Download" />
+        <telerik:PropertyNameDataPointBinding x:Key="CategoryBinding" PropertyName="DateString" />
+    </Page.Resources>
     <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
-        <Grid>
-            <!--
-                The SystemControlPageBackgroundChromeLowBrush background represents where you should place your content.
-                Place your content here.
-            -->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Last 10 days data usages:" />
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="{StaticResource MediumFontSize}"
+                Text="Last 10 days usages"
+                TextAlignment="Center" />
+            <telerik:RadPieChart Grid.Row="1" PaletteName="DefaultLight">
+                <telerik:PieSeries ItemsSource="{Binding TotalUsageCollection}" RadiusFactor="0.7">
+                    <telerik:PieSeries.ValueBinding>
+                        <telerik:PropertyNameDataPointBinding PropertyName="DataUse" />
+                    </telerik:PieSeries.ValueBinding>
+                    <telerik:PieSeries.LabelDefinitions>
+                        <telerik:ChartSeriesLabelDefinition Margin="-15" Strategy="{StaticResource Strategy}" />
+                    </telerik:PieSeries.LabelDefinitions>
+                </telerik:PieSeries>
+            </telerik:RadPieChart>
         </Grid>
+        <Grid Grid.Row="1" Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                HorizontalAlignment="Center"
+                FontSize="{StaticResource MediumFontSize}"
+                Text="Today usages" />
+            <telerik:RadPieChart Grid.Row="1" PaletteName="DefaultLight">
+                <telerik:PieSeries ItemsSource="{Binding TodayUsageCollection}" RadiusFactor="0.7">
+                    <telerik:PieSeries.ValueBinding>
+                        <telerik:PropertyNameDataPointBinding PropertyName="DataUse" />
+                    </telerik:PieSeries.ValueBinding>
+                    <telerik:PieSeries.LabelDefinitions>
+                        <telerik:ChartSeriesLabelDefinition Margin="-15" Strategy="{StaticResource Strategy}" />
+                    </telerik:PieSeries.LabelDefinitions>
+                </telerik:PieSeries>
+            </telerik:RadPieChart>
+        </Grid>
+        <telerik:RadCartesianChart
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            PaletteName="DefaultLight">
+            <telerik:RadCartesianChart.HorizontalAxis>
+                <telerik:CategoricalAxis />
+            </telerik:RadCartesianChart.HorizontalAxis>
+            <telerik:RadCartesianChart.VerticalAxis>
+                <telerik:LinearAxis Title="Hours" />
+            </telerik:RadCartesianChart.VerticalAxis>
+            <telerik:RadCartesianChart.Grid>
+                <telerik:CartesianChartGrid MajorLinesVisibility="Y" />
+            </telerik:RadCartesianChart.Grid>
+            <telerik:SplineAreaSeries ItemsSource="{Binding NetworkUsageCollection}">
+                <telerik:SplineAreaSeries.ValueBinding>
+                    <telerik:PropertyNameDataPointBinding PropertyName="ConnectionDuration.Hours" />
+                </telerik:SplineAreaSeries.ValueBinding>
+                <telerik:SplineAreaSeries.CategoryBinding>
+                    <telerik:PropertyNameDataPointBinding PropertyName="DateString" />
+                </telerik:SplineAreaSeries.CategoryBinding>
+            </telerik:SplineAreaSeries>
+        </telerik:RadCartesianChart>
+
+        <!--<telerik:RadCartesianChart
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            PaletteName="DefaultLight">
+            <telerik:RadCartesianChart.HorizontalAxis>
+                <telerik:CategoricalAxis />
+            </telerik:RadCartesianChart.HorizontalAxis>
+            <telerik:RadCartesianChart.VerticalAxis>
+                <telerik:LinearAxis Title="Hours" />
+            </telerik:RadCartesianChart.VerticalAxis>
+            <telerik:RadCartesianChart.Grid>
+                <telerik:CartesianChartGrid MajorLinesVisibility="Y" StripLinesVisibility="Y" />
+            </telerik:RadCartesianChart.Grid>
+            <telerik:BarSeries ItemsSource="{Binding NetworkUsageCollection}">
+                <telerik:BarSeries.ValueBinding>
+                    <telerik:PropertyNameDataPointBinding PropertyName="ConnectionDuration.Hours" />
+                </telerik:BarSeries.ValueBinding>
+                <telerik:BarSeries.CategoryBinding>
+                    <telerik:PropertyNameDataPointBinding PropertyName="DateString" />
+                </telerik:BarSeries.CategoryBinding>
+            </telerik:BarSeries>
+        </telerik:RadCartesianChart>-->
+
+        <telerik:RadCartesianChart
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            PaletteName="DefaultLight">
+            <telerik:RadCartesianChart.HorizontalAxis>
+                <telerik:CategoricalAxis />
+            </telerik:RadCartesianChart.HorizontalAxis>
+            <telerik:RadCartesianChart.VerticalAxis>
+                <telerik:LinearAxis Title="MBs" />
+            </telerik:RadCartesianChart.VerticalAxis>
+            <telerik:RadCartesianChart.Grid>
+                <telerik:CartesianChartGrid MajorLinesVisibility="Y" StripLinesVisibility="Y" />
+            </telerik:RadCartesianChart.Grid>
+            <telerik:BarSeries
+                CategoryBinding="{StaticResource CategoryBinding}"
+                CombineMode="Cluster"
+                ItemsSource="{Binding NetworkUsageCollection}"
+                ValueBinding="{StaticResource UploadBinding}" />
+            <telerik:BarSeries
+                CategoryBinding="{StaticResource CategoryBinding}"
+                CombineMode="Cluster"
+                ItemsSource="{Binding NetworkUsageCollection}"
+                ValueBinding="{StaticResource DownloadBinding}" />
+            <telerik:RadCartesianChart.Behaviors>
+                <telerik:ChartTooltipBehavior>
+                    <telerik:ChartTooltipBehavior.ContentTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Transparent">
+                                <StackPanel Background="Transparent">
+                                    <TextBlock Foreground="White" Text="{Binding DataPoint.Value}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </telerik:ChartTooltipBehavior.ContentTemplate>
+                </telerik:ChartTooltipBehavior>
+            </telerik:RadCartesianChart.Behaviors>
+        </telerik:RadCartesianChart>
     </Grid>
 </Page>

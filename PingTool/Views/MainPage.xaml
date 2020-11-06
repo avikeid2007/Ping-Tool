@@ -139,11 +139,11 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <TextBlock FontSize="{StaticResource LargeFontSize}" Text="IP Address" />
             <TextBlock
                 Grid.Column="1"
@@ -265,7 +265,7 @@
             <TextBlock
                 Grid.Row="3"
                 FontSize="{StaticResource LargeFontSize}"
-                Text="Data uses(MBs)" />
+                Text="Data Usages(MBs)" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"

@@ -131,6 +131,9 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
     </PackageReference>
+    <PackageReference Include="Telerik.UI.for.UniversalWindowsPlatform">
+      <Version>1.0.2.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Strings\en-us\Resources.resw" />
@@ -145,8 +148,11 @@
     <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Helpers\ImageHelper.cs" />
     <Compile Include="Helpers\NavHelper.cs" />
+    <Compile Include="Helpers\PieLabelStrategy.cs" />
     <Compile Include="Helpers\Restricted.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
+    <Compile Include="Models\DataUse.cs" />
+    <Compile Include="Models\NetworkDataUse.cs" />
     <Compile Include="Models\PingMassage.cs" />
     <Compile Include="Models\UserData.cs" />
     <Compile Include="Services\ActivationService.cs" />
