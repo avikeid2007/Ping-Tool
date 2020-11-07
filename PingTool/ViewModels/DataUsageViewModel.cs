@@ -13,6 +13,47 @@ namespace PingTool.ViewModels
         private ObservableCollection<DataUse> _networkUsageCollection;
         private ObservableCollection<NetworkDataUse> _totalUsageCollection;
         private ObservableCollection<NetworkDataUse> _todayUsageCollection;
+        private NetworkDataUse _todayUpload;
+        private NetworkDataUse _todayDownload;
+        private NetworkDataUse _totalUpload;
+        private NetworkDataUse _totalDownload;
+
+        public NetworkDataUse TodayUpload
+        {
+            get { return _todayUpload; }
+            set
+            {
+                _todayUpload = value;
+                OnPropertyChanged();
+            }
+        }
+        public NetworkDataUse TodayDownload
+        {
+            get { return _todayDownload; }
+            set
+            {
+                _todayDownload = value;
+                OnPropertyChanged();
+            }
+        }
+        public NetworkDataUse TotalUpload
+        {
+            get { return _totalUpload; }
+            set
+            {
+                _totalUpload = value;
+                OnPropertyChanged();
+            }
+        }
+        public NetworkDataUse TotalDownload
+        {
+            get { return _totalDownload; }
+            set
+            {
+                _totalDownload = value;
+                OnPropertyChanged();
+            }
+        }
         public ObservableCollection<NetworkDataUse> TotalUsageCollection
         {
             get { return _totalUsageCollection; }
@@ -62,8 +103,10 @@ namespace PingTool.ViewModels
             var usages = await GetDataUsegesAsync(DateTime.Now.AddDays(-10).Date, DateTime.Now.Date, NetworkInformation.GetInternetConnectionProfile());
             if (usages != null)
             {
-                TotalUsageCollection.Add(new NetworkDataUse { DataType = "Download", DataUse = GetSizeInByte(usages.BytesReceived) });
-                TotalUsageCollection.Add(new NetworkDataUse { DataType = "Upload", DataUse = GetSizeInByte(usages.BytesSent) });
+                TotalDownload = new NetworkDataUse { DataType = "Download", DataUse = GetSizeInByte(usages.BytesReceived) };
+                TotalUpload = new NetworkDataUse { DataType = "Upload", DataUse = GetSizeInByte(usages.BytesSent) };
+                TotalUsageCollection.Add(TotalDownload);
+                TotalUsageCollection.Add(TotalUpload);
             }
         }
         private async Task GeTodayDataUsegesAsync()
@@ -72,8 +115,10 @@ namespace PingTool.ViewModels
             var usages = await GetDataUsegesAsync(DateTime.Now.AddDays(-1).Date, DateTime.Now.Date, NetworkInformation.GetInternetConnectionProfile());
             if (usages != null)
             {
-                TodayUsageCollection.Add(new NetworkDataUse { DataType = "Download", DataUse = GetSizeInByte(usages.BytesReceived) });
-                TodayUsageCollection.Add(new NetworkDataUse { DataType = "Upload", DataUse = GetSizeInByte(usages.BytesSent) });
+                TodayDownload = new NetworkDataUse { DataType = "Download", DataUse = GetSizeInByte(usages.BytesReceived) };
+                TodayUpload = new NetworkDataUse { DataType = "Upload", DataUse = GetSizeInByte(usages.BytesSent) };
+                TodayUsageCollection.Add(TodayDownload);
+                TodayUsageCollection.Add(TodayUpload);
             }
         }
         private async Task<NetworkUsage> GetDataUsegesAsync(DateTime startDate, DateTime endDate, ConnectionProfile internetConnectionProfile)

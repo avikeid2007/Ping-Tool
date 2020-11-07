@@ -10,21 +10,8 @@ namespace PingTool.Core.Services
 {
     public class IdentityService
     {
-        // For more information about using Identity, see
-        // https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/services/identity.md
-        //
-        // Read more about Microsoft Identity Client here
-        // https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki
-        // https://docs.microsoft.com/azure/active-directory/develop/v2-overview
-
-        // TODO WTS: Please create a ClientID following these steps and update the app.config IdentityClientId.
-        // https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app
-        // Make sure you configure urn:ietf:wg:oauth:2.0:oob as a redirect uri as described in
-        // https://docs.microsoft.com/en-us/dotnet/api/microsoft.identity.client.applicationoptions.redirecturi?view=azure-dotnet
         private readonly string _clientId = ConfigurationManager.AppSettings["IdentityClientId"];
-
         private readonly string[] _graphScopes = new string[] { "user.read" };
-
         private bool _integratedAuthAvailable;
         private IPublicClientApplication _client;
         private AuthenticationResult _authenticationResult;
@@ -93,8 +80,6 @@ namespace PingTool.Core.Services
 
         public bool IsAuthorized()
         {
-            // TODO WTS: You can also add extra authorization checks here.
-            // i.e.: Checks permisions of _authenticationResult.Account.Username in a database.
             return true;
         }
 

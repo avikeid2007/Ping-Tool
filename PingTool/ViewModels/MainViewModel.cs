@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel;
@@ -13,8 +14,10 @@ using Windows.ApplicationModel.AppService;
 using Windows.Foundation.Collections;
 using Windows.Foundation.Metadata;
 using Windows.Networking.Connectivity;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
@@ -35,6 +38,9 @@ namespace PingTool
         private ObservableCollection<NetworkInterface> _localLANCollection;
         private NetworkInterface _selectedLocalLAN;
         private bool _hasInternetAccess;
+        private bool _isPingAutoStart;
+        private string _urlRegex = @"^(http|https|ftp|)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$";
+        private string _ipRegex = @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}";
         public MainViewModel()
         {
 
@@ -81,6 +87,10 @@ namespace PingTool
             set
             {
                 _hostNameOrAddress = value;
+                if (IsValidHostNameOrAddress(value))
+                {
+                    _ = ApplicationData.Current.LocalSettings.SaveAsync(nameof(HostNameOrAddress), value);
+                }
                 OnPropertyChanged();
             }
         }
@@ -165,7 +175,16 @@ namespace PingTool
         public ICommand KeyDownCommand => new AsyncCommand<KeyRoutedEventArgs>(OnKeyDownCommandExecuteAsync);
         public async Task OnNavigatedToAsync(NavigationEventArgs _)
         {
-            HostNameOrAddress = "172.217.166.238";
+            _isPingAutoStart = await ApplicationData.Current.LocalSettings.ReadAsync<bool>("IsPingAutoStart");
+            var address = await ApplicationData.Current.LocalSettings.ReadAsync<string>(nameof(HostNameOrAddress));
+            if (string.IsNullOrEmpty(address))
+            {
+                HostNameOrAddress = "172.217.166.238";
+            }
+            else
+            {
+                HostNameOrAddress = address;
+            }
             if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
             {
                 App.AppServiceConnected += MainPage_AppServiceConnected;
@@ -174,11 +193,17 @@ namespace PingTool
 
             }
             await SetNetworkInfoAsync();
-            NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChanged;
-            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChanged;
+            NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChangedAsync;
+            NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChangedAsync;
+            if (_isPingAutoStart)
+            {
+                await Task.Delay(2000);
+                await OnStartCommandExecutedAsync();
+            }
+
         }
 
-        private async Task NotifyUI(Action action)
+        private async Task NotifyUIAsync(Action action)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                                () => action());
@@ -189,28 +214,28 @@ namespace PingTool
             try
             {
                 var icp = NetworkInformation.GetInternetConnectionProfile();
-                await NotifyUI(() => LocalLANCollection = new ObservableCollection<NetworkInterface>(NetworkInterface.GetAllNetworkInterfaces()));
+                await NotifyUIAsync(() => LocalLANCollection = new ObservableCollection<NetworkInterface>(NetworkInterface.GetAllNetworkInterfaces()));
                 if (icp?.NetworkAdapter == null)
                 {
-                    await NotifyUI(() => ClearNetworkStatus());
+                    await NotifyUIAsync(() => ClearNetworkStatus());
                     return;
                 }
-                await NotifyUI(() => HasInternetAccess = icp.GetNetworkConnectivityLevel() >= NetworkConnectivityLevel.InternetAccess);
+                await NotifyUIAsync(() => HasInternetAccess = icp.GetNetworkConnectivityLevel() >= NetworkConnectivityLevel.InternetAccess);
                 var hostname = NetworkInformation.GetHostNames()
                         .FirstOrDefault(
                             hn => hn.IPInformation?.NetworkAdapter != null
                             && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
                 var CurrentNetworkId = "{" + hostname.IPInformation.NetworkAdapter.NetworkAdapterId.ToString().ToUpper() + "}";
-                await NotifyUI(() => SelectedLocalLAN = LocalLANCollection.FirstOrDefault(x => x.Id.ToUpper() == CurrentNetworkId));
-                await NotifyUI(() => IpAddress = hostname?.CanonicalName);
-                await NotifyUI(() => IpType = hostname?.Type.ToString());
-                await NotifyUI(() => ProfileName = icp.ProfileName);
-                await NotifyUI(() => IsWlan = icp.IsWlanConnectionProfile);
-                await NotifyUI(() => WifiBars = Convert.ToInt32(icp.GetSignalBars()));
+                await NotifyUIAsync(() => SelectedLocalLAN = LocalLANCollection.FirstOrDefault(x => x.Id.ToUpper() == CurrentNetworkId));
+                await NotifyUIAsync(() => IpAddress = hostname?.CanonicalName);
+                await NotifyUIAsync(() => IpType = hostname?.Type.ToString());
+                await NotifyUIAsync(() => ProfileName = icp.ProfileName);
+                await NotifyUIAsync(() => IsWlan = icp.IsWlanConnectionProfile);
+                await NotifyUIAsync(() => WifiBars = Convert.ToInt32(icp.GetSignalBars()));
                 var ipstats = SelectedLocalLAN.GetIPStatistics();
-                await NotifyUI(() => TotalReceivedBytes = GetSizeInByte(ipstats.BytesReceived));
-                await NotifyUI(() => TotalSentBytes = GetSizeInByte(ipstats.BytesSent));
-                await NotifyUI(() => IsSupportIPV6 = SelectedLocalLAN.Supports(NetworkInterfaceComponent.IPv6));
+                await NotifyUIAsync(() => TotalReceivedBytes = GetSizeInByte(ipstats.BytesReceived));
+                await NotifyUIAsync(() => TotalSentBytes = GetSizeInByte(ipstats.BytesSent));
+                await NotifyUIAsync(() => IsSupportIPV6 = SelectedLocalLAN.Supports(NetworkInterfaceComponent.IPv6));
             }
             catch (Exception ex)
             {
@@ -223,7 +248,7 @@ namespace PingTool
             ProfileName = string.Empty;
             HasInternetAccess = false;
         }
-        private async void NetworkInformation_NetworkStatusChanged(object sender)
+        private async void NetworkInformation_NetworkStatusChangedAsync(object sender)
         {
             await SetNetworkInfoAsync();
         }
@@ -250,28 +275,41 @@ namespace PingTool
                 Response = Convert.ToString(args.Request.Message["response"]),
             };
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                                () => { (PingCollaction ?? (PingCollaction = new ObservableCollection<PingMassage>())).Add(reply); });
+                                () => (PingCollaction ?? (PingCollaction = new ObservableCollection<PingMassage>())).Add(reply));
         }
         private async Task OnStartCommandExecutedAsync()
         {
-            if (!string.IsNullOrEmpty(HostNameOrAddress))
+            ValueSet request = new ValueSet();
+            if (!IsPingStarted)
             {
-                ValueSet request = new ValueSet();
-                if (!IsPingStarted)
+                if (IsValidHostNameOrAddress(HostNameOrAddress))
                 {
-                    request.Add("host", HostNameOrAddress);
+                    request.Add("host", HostNameOrAddress.Replace("http://", "").Replace("https://", "").TrimEnd('/'));
                     request.Add("isStop", "false");
                     await App.Connection.SendMessageAsync(request);
                     IsPingStarted = true;
                 }
                 else
                 {
-                    request.Add("host", "");
-                    request.Add("isStop", "false");
-                    await App.Connection.SendMessageAsync(request);
-                    IsPingStarted = false;
+                    await new MessageDialog("Invalid Host Name or Address").ShowAsync();
                 }
             }
+            else
+            {
+                request.Add("host", "");
+                request.Add("isStop", "false");
+                await App.Connection.SendMessageAsync(request);
+                IsPingStarted = false;
+            }
+        }
+        private bool IsValidHost(string url, string pattern)
+        {
+            var reg = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            return reg.IsMatch(url);
+        }
+        private bool IsValidHostNameOrAddress(string hostNameOrAddress)
+        {
+            return !string.IsNullOrEmpty(hostNameOrAddress) && (IsValidHost(hostNameOrAddress, _ipRegex) || IsValidHost(hostNameOrAddress, _urlRegex));
         }
         private void OnClearCommandExecuted()
         {

@@ -30,7 +30,58 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Last 10 days data usages:" />
+        <TextBlock FontSize="{StaticResource XLargeFontSize}" Text="Last 10 days data usages:" />
+        <Grid
+            Grid.Row="1"
+            Grid.Column="0"
+            Padding="{StaticResource MediumBottomMargin}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Today Data Usages(MBs)" />
+            <TextBlock
+                Grid.Column="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text=":" />
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TodayDownload.DataUse, Mode=OneWay}" />
+                <SymbolIcon Symbol="Download" />
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="/" />
+
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TodayUpload.DataUse, Mode=OneWay}" />
+                <SymbolIcon Symbol="Upload" />
+            </StackPanel>
+            <TextBlock
+                Grid.Row="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="Total Data Usages(MBs)" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                FontSize="{StaticResource LargeFontSize}"
+                Text=":" />
+            <StackPanel
+                Grid.Row="1"
+                Grid.Column="2"
+                Orientation="Horizontal">
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalDownload.DataUse, Mode=OneWay}" />
+                <SymbolIcon Symbol="Download" />
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="/" />
+                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalUpload.DataUse, Mode=OneWay}" />
+                <SymbolIcon Symbol="Upload" />
+            </StackPanel>
+        </Grid>
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
@@ -41,6 +92,7 @@
                 FontSize="{StaticResource MediumFontSize}"
                 Text="Last 10 days usages"
                 TextAlignment="Center" />
+
             <telerik:RadPieChart Grid.Row="1" PaletteName="DefaultLight">
                 <telerik:PieSeries ItemsSource="{Binding TotalUsageCollection}" RadiusFactor="0.7">
                     <telerik:PieSeries.ValueBinding>

@@ -1,15 +1,14 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
-
-using PingTool.Core.Helpers;
+﻿using PingTool.Core.Helpers;
 using PingTool.Core.Services;
 using PingTool.Helpers;
 using PingTool.Models;
 using PingTool.Services;
-
+using System;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -71,6 +70,7 @@ namespace PingTool.Views
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             await InitializeAsync();
+            AutoStartPing.IsOn = await ApplicationData.Current.LocalSettings.ReadAsync<bool>("IsPingAutoStart");
         }
 
         private async Task InitializeAsync()
@@ -148,7 +148,7 @@ namespace PingTool.Views
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
+        private void Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (Equals(storage, value))
             {
@@ -160,5 +160,14 @@ namespace PingTool.Views
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+        private async void ToggleSwitch_ToggledAsync(object sender, RoutedEventArgs e)
+        {
+            var toggleSwitch = sender as ToggleSwitch;
+            if (toggleSwitch != null)
+            {
+                await ApplicationData.Current.LocalSettings.SaveAsync("IsPingAutoStart", toggleSwitch.IsOn);
+            }
+        }
     }
 }
