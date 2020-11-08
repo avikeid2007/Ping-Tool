@@ -78,10 +78,7 @@ namespace PingTool.Core.Services
             }
         }
 
-        public bool IsAuthorized()
-        {
-            return true;
-        }
+        public bool IsAuthorized => true;
 
         public string GetAccountUserName()
         {
@@ -180,9 +177,6 @@ namespace PingTool.Core.Services
             }
             catch (MsalException)
             {
-                // TODO WTS: Silentauth failed, please handle this exception as appropriate to your scenario
-                // For more info on MsalExceptions see
-                // https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/exceptions
                 return false;
             }
         }

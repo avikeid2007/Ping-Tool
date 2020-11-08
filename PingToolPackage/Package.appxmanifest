@@ -8,13 +8,13 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="PingToolPackage"
-    Publisher="CN=avnish"
+    Name="34488AvnishKumar.PingLegacy"
+    Publisher="CN=1494B4FB-4349-4083-8AFA-16D2A64B8D99"
     Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>PingToolPackage</DisplayName>
-    <PublisherDisplayName>avnish</PublisherDisplayName>
+    <DisplayName>Ping Legacy</DisplayName>
+    <PublisherDisplayName>Avnish Kumar</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
 
@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="Ping Tool"
+        DisplayName="Ping Legacy"
         Description="Ping Tool"
         BackgroundColor="transparent"
         Square150x150Logo="Images\Square150x150Logo.png"
@@ -53,6 +53,5 @@
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <Capability Name="internetClientServer"/>
-    <uap:Capability Name="enterpriseAuthentication"/>
   </Capabilities>
 </Package>

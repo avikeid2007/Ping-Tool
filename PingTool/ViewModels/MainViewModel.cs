@@ -25,7 +25,6 @@ namespace PingTool
 {
     public class MainViewModel : BindableBase
     {
-        public ConnectionProfile connectionProfile { get; set; }
         private string _ipAddress;
         private string _profileName;
         private bool _isWlan;
@@ -39,12 +38,8 @@ namespace PingTool
         private NetworkInterface _selectedLocalLAN;
         private bool _hasInternetAccess;
         private bool _isPingAutoStart;
-        private string _urlRegex = @"^(http|https|ftp|)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$";
-        private string _ipRegex = @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}";
-        public MainViewModel()
-        {
-
-        }
+        private readonly string _urlRegex = @"^(http|https|ftp|)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$";
+        private readonly string _ipRegex = @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}";
         public bool HasInternetAccess
         {
             get { return _hasInternetAccess; }
@@ -190,7 +185,6 @@ namespace PingTool
                 App.AppServiceConnected += MainPage_AppServiceConnected;
                 App.AppServiceDisconnected += MainPage_AppServiceDisconnected;
                 await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
-
             }
             await SetNetworkInfoAsync();
             NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChangedAsync;
@@ -200,7 +194,6 @@ namespace PingTool
                 await Task.Delay(2000);
                 await OnStartCommandExecutedAsync();
             }
-
         }
 
         private async Task NotifyUIAsync(Action action)
@@ -237,7 +230,7 @@ namespace PingTool
                 await NotifyUIAsync(() => TotalSentBytes = GetSizeInByte(ipstats.BytesSent));
                 await NotifyUIAsync(() => IsSupportIPV6 = SelectedLocalLAN.Supports(NetworkInterfaceComponent.IPv6));
             }
-            catch (Exception ex)
+            catch
             {
             }
         }
@@ -348,9 +341,11 @@ namespace PingTool
         public bool IsPingStop { get; set; }
         public async Task StartPingAsync()
         {
-            ValueSet request = new ValueSet();
-            request.Add("host", "8.8.8.8");
-            request.Add("isStop", "false");
+            ValueSet request = new ValueSet
+            {
+                { "host", "8.8.8.8" },
+                { "isStop", "false" }
+            };
             await App.Connection.SendMessageAsync(request);
         }
     }

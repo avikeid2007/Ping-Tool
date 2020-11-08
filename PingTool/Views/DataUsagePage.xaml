@@ -190,12 +190,12 @@
                 CategoryBinding="{StaticResource CategoryBinding}"
                 CombineMode="Cluster"
                 ItemsSource="{Binding NetworkUsageCollection}"
-                ValueBinding="{StaticResource UploadBinding}" />
+                ValueBinding="{StaticResource DownloadBinding}" />
             <telerik:BarSeries
                 CategoryBinding="{StaticResource CategoryBinding}"
                 CombineMode="Cluster"
                 ItemsSource="{Binding NetworkUsageCollection}"
-                ValueBinding="{StaticResource DownloadBinding}" />
+                ValueBinding="{StaticResource UploadBinding}" />
             <telerik:RadCartesianChart.Behaviors>
                 <telerik:ChartTooltipBehavior>
                     <telerik:ChartTooltipBehavior.ContentTemplate>
