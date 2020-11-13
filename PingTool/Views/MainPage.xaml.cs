@@ -1,31 +1,21 @@
-﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Navigation;
 
 namespace PingTool.Views
 {
-    public sealed partial class MainPage : Page, INotifyPropertyChanged
+    public sealed partial class MainPage : Page
     {
+        private MainViewModel ViewModel;
         public MainPage()
         {
             InitializeComponent();
+            ViewModel = new MainViewModel();
+            this.DataContext = ViewModel;
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
-            if (Equals(storage, value))
-            {
-                return;
-            }
-
-            storage = value;
-            OnPropertyChanged(propertyName);
+            await ViewModel.OnNavigatedToAsync(e);
+            base.OnNavigatedTo(e);
         }
-
-        private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

@@ -99,7 +99,7 @@ namespace PingTool.Views
             KeyboardAccelerators.Add(_altLeftKeyboardAccelerator);
             KeyboardAccelerators.Add(_backKeyboardAccelerator);
             IsLoggedIn = IdentityService.IsLoggedIn();
-            IsAuthorized = IsLoggedIn && IdentityService.IsAuthorized();
+            IsAuthorized = IsLoggedIn && IdentityService.IsAuthorized;
             User = await UserDataService.GetUserAsync();
         }
 
@@ -111,7 +111,7 @@ namespace PingTool.Views
         private void OnLoggedIn(object sender, EventArgs e)
         {
             IsLoggedIn = true;
-            IsAuthorized = IsLoggedIn && IdentityService.IsAuthorized();
+            IsAuthorized = IsLoggedIn && IdentityService.IsAuthorized;
             IsBusy = false;
         }
 

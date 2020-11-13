@@ -1,32 +1,17 @@
-﻿using System;
+﻿using Microsoft.Identity.Client;
+using PingTool.Core.Helpers;
+using System;
 using System.Configuration;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 
-using Microsoft.Identity.Client;
-
-using PingTool.Core.Helpers;
-
 namespace PingTool.Core.Services
 {
     public class IdentityService
     {
-        // For more information about using Identity, see
-        // https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/services/identity.md
-        //
-        // Read more about Microsoft Identity Client here
-        // https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki
-        // https://docs.microsoft.com/azure/active-directory/develop/v2-overview
-
-        // TODO WTS: Please create a ClientID following these steps and update the app.config IdentityClientId.
-        // https://docs.microsoft.com/azure/active-directory/develop/quickstart-register-app
-        // Make sure you configure urn:ietf:wg:oauth:2.0:oob as a redirect uri as described in
-        // https://docs.microsoft.com/en-us/dotnet/api/microsoft.identity.client.applicationoptions.redirecturi?view=azure-dotnet
         private readonly string _clientId = ConfigurationManager.AppSettings["IdentityClientId"];
-
         private readonly string[] _graphScopes = new string[] { "user.read" };
-
         private bool _integratedAuthAvailable;
         private IPublicClientApplication _client;
         private AuthenticationResult _authenticationResult;
@@ -87,18 +72,13 @@ namespace PingTool.Core.Services
 
                 return LoginResultType.UnknownError;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return LoginResultType.UnknownError;
             }
         }
 
-        public bool IsAuthorized()
-        {
-            // TODO WTS: You can also add extra authorization checks here.
-            // i.e.: Checks permisions of _authenticationResult.Account.Username in a database.
-            return true;
-        }
+        public bool IsAuthorized => true;
 
         public string GetAccountUserName()
         {
@@ -197,9 +177,6 @@ namespace PingTool.Core.Services
             }
             catch (MsalException)
             {
-                // TODO WTS: Silentauth failed, please handle this exception as appropriate to your scenario
-                // For more info on MsalExceptions see
-                // https://github.com/AzureAD/microsoft-authentication-library-for-dotnet/wiki/exceptions
                 return false;
             }
         }
