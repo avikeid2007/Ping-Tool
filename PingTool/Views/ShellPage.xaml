@@ -44,6 +44,7 @@
                 x:Uid="Shell_DataUsage"
                 helpers:NavHelper.NavigateTo="views:DataUsagePage"
                 Icon="World" />
+            <winui:NavigationViewItem x:Uid="Shell_History" Icon="Document" helpers:NavHelper.NavigateTo="views:HistoryPage" />
         </winui:NavigationView.MenuItems>
 
         <winui:NavigationView.PaneFooter>

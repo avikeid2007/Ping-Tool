@@ -261,6 +261,8 @@ namespace PingTool
         {
             var reply = new PingMassage
             {
+                PingId = _pingId,
+                Date = _pingDate,
                 IpAddress = Convert.ToString(args.Request.Message["host"]),
                 Time = Convert.ToInt64(args.Request.Message["time"]),
                 Size = Convert.ToInt32(args.Request.Message["size"]),
@@ -269,6 +271,7 @@ namespace PingTool
             };
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                                 () => (PingCollaction ?? (PingCollaction = new ObservableCollection<PingMassage>())).Add(reply));
+            SQLiteHelper.Save(reply);
         }
         private async Task OnStartCommandExecutedAsync()
         {
@@ -277,10 +280,13 @@ namespace PingTool
             {
                 if (IsValidHostNameOrAddress(HostNameOrAddress))
                 {
+                    _pingId = Guid.NewGuid();
+                    _pingDate = DateTimeOffset.Now;
                     request.Add("host", HostNameOrAddress.Replace("http://", "").Replace("https://", "").TrimEnd('/'));
                     request.Add("isStop", "false");
                     await App.Connection.SendMessageAsync(request);
                     IsPingStarted = true;
+
                 }
                 else
                 {
@@ -329,6 +335,9 @@ namespace PingTool
             FileHelper.CopyText(IpAddress ?? "");
         }
         private ObservableCollection<PingMassage> _pingCollaction;
+        private Guid _pingId;
+        private DateTimeOffset _pingDate;
+
         public ObservableCollection<PingMassage> PingCollaction
         {
             get { return _pingCollaction; }

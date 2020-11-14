@@ -216,4 +216,8 @@
     <value>DataUsage</value>
     <comment>Navigation view item name for DataUsage</comment>
   </data>
+  <data name="Shell_History.Content" xml:space="preserve">
+    <value>History</value>
+    <comment>Navigation view item name for History</comment>
+  </data>
 </root>
