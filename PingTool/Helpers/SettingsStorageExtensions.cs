@@ -1,9 +1,7 @@
-﻿using System;
+﻿using PingTool.Core.Helpers;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-
-using PingTool.Core.Helpers;
-
 using Windows.Storage;
 using Windows.Storage.Streams;
 
@@ -53,13 +51,10 @@ namespace PingTool.Helpers
 
         public static async Task<T> ReadAsync<T>(this ApplicationDataContainer settings, string key)
         {
-            object obj = null;
-
-            if (settings.Values.TryGetValue(key, out obj))
+            if (settings.Values.TryGetValue(key, out object obj))
             {
                 return await Json.ToObjectAsync<T>((string)obj);
             }
-
             return default;
         }
 
@@ -84,7 +79,7 @@ namespace PingTool.Helpers
         {
             var item = await folder.TryGetItemAsync(fileName).AsTask().ConfigureAwait(false);
 
-            if ((item != null) && item.IsOfType(StorageItemTypes.File))
+            if ((item?.IsOfType(StorageItemTypes.File) == true))
             {
                 var storageFile = await folder.GetFileAsync(fileName);
                 byte[] content = await storageFile.ReadBytesAsync();

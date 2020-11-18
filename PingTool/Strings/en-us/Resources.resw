@@ -220,4 +220,8 @@
     <value>History</value>
     <comment>Navigation view item name for History</comment>
   </data>
+  <data name="Shell_Suggestion.Content" xml:space="preserve">
+    <value>Suggestion</value>
+    <comment>Navigation view item name for Suggestion</comment>
+  </data>
 </root>

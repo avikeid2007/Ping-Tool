@@ -1,0 +1,73 @@
+﻿<Page
+    x:Class="PingTool.Views.SuggestionPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Style="{StaticResource PageStyle}"
+    mc:Ignorable="d">
+    <Grid x:Name="ContentArea" Margin="{StaticResource MediumLeftRightMargin}">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="80" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Suggestion: " />
+        <TextBox
+            x:Name="TxtName"
+            Grid.Row="1"
+            Margin="4"
+            Header="Name"
+            PlaceholderText="Name" />
+        <TextBox
+            x:Name="TxtEmail"
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="4"
+            Header="Email(Optional)"
+            PlaceholderText="Email(Optional)" />
+        <TextBox
+            x:Name="TxtCountry"
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="4"
+            Header="Country(Optional)"
+            PlaceholderText="Country(Optional)" />
+        <TextBox
+            x:Name="TxtSuggestion"
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="4"
+            Header="Suggestion"
+            PlaceholderText="Want more feature, Write us your suggestion, feature-request, or issue here." />
+        <Button
+            Grid.Row="3"
+            Grid.Column="1"
+            Margin="4"
+            HorizontalAlignment="Center"
+            Click="Button_Click">
+            <StackPanel Orientation="Horizontal">
+                <SymbolIcon Symbol="Send" />
+                <TextBlock Margin="4,0,0,0" Text="Send" />
+            </StackPanel>
+
+        </Button>
+        <TextBlock
+            x:Name="TxtThanksYou"
+            Grid.Row="4"
+            Grid.Column="1"
+            Margin="8"
+            HorizontalAlignment="Center"
+            Text="Thanks for suggestion."
+            Visibility="Collapsed" />
+    </Grid>
+</Page>
