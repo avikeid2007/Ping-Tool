@@ -1,12 +1,11 @@
-﻿using System;
+﻿using PingTool.Activation;
+using PingTool.Core.Helpers;
+using PingTool.Core.Services;
+using PingTool.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-using PingTool.Activation;
-using PingTool.Core.Helpers;
-using PingTool.Core.Services;
-
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -44,7 +43,7 @@ namespace PingTool.Services
                 UserDataService.Initialize();
                 IdentityService.InitializeWithAadAndPersonalMsAccounts();
                 await IdentityService.AcquireTokenSilentAsync();
-
+                SQLiteHelper.InitializeDatabase();
                 // Do not repeat app initialization when the Window already has content,
                 // just ensure that the window is active
                 if (Window.Current.Content == null)

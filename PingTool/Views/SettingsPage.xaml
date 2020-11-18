@@ -58,10 +58,17 @@
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
+            <TextBlock Style="{ThemeResource SubtitleTextBlockStyle}" Text="Ping Setting" />
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                 <TextBlock Text="Ping Autostart" />
                 <ToggleSwitch x:Name="AutoStartPing" Toggled="ToggleSwitch_ToggledAsync" />
-
+                <!--<TextBlock Text="Max Ping History" />
+                <Slider
+                    x:Name="PingHistoryCount"
+                    Width="300"
+                    HorizontalAlignment="Left"
+                    Maximum="100"
+                    Minimum="10" />-->
             </StackPanel>
             <TextBlock x:Uid="Settings_User" Style="{ThemeResource SubtitleTextBlockStyle}" />
 

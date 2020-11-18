@@ -37,5 +37,4 @@ namespace PingTool.Helpers
             return false;
         }
     }
-
 }

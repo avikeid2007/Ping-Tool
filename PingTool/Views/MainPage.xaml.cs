@@ -17,5 +17,6 @@ namespace PingTool.Views
             await ViewModel.OnNavigatedToAsync(e);
             base.OnNavigatedTo(e);
         }
+
     }
 }

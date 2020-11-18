@@ -1,5 +1,9 @@
-﻿using PingTool.Services;
+﻿using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using PingTool.Services;
 using System;
+using System.Collections.Generic;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.AppService;
@@ -15,18 +19,18 @@ namespace PingTool
         public static AppServiceConnection Connection = null;
         public static event EventHandler AppServiceDisconnected;
         public static event EventHandler<AppServiceTriggerDetails> AppServiceConnected;
-
         private ActivationService ActivationService
         {
             get { return _activationService.Value; }
         }
-
         public App()
         {
             InitializeComponent();
             UnhandledException += OnAppUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
             this.Suspending += OnSuspending;
+            AppCenter.Start("6d7768e2-cf4e-41fb-a2b8-30c20c7ef36b",
+                        typeof(Analytics), typeof(Crashes));
         }
         private void OnTaskCanceled(IBackgroundTaskInstance sender, BackgroundTaskCancellationReason reason)
         {
@@ -47,15 +51,14 @@ namespace PingTool
                 await ActivationService.ActivateAsync(args);
             }
         }
-
         protected override async void OnActivated(IActivatedEventArgs args)
         {
             await ActivationService.ActivateAsync(args);
         }
-
         private void OnAppUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
-        { }
-
+        {
+            Analytics.TrackEvent("Unhandled Exception", new Dictionary<string, string> { { "Type", e.GetType().ToString() }, { "Message", e.Message }, { "Stack Trace", e.ToString() } });
+        }
         private ActivationService CreateActivationService()
         {
             return new ActivationService(this, typeof(Views.MainPage), new Lazy<UIElement>(CreateShell));
@@ -68,15 +71,12 @@ namespace PingTool
         {
             base.OnBackgroundActivated(args);
 
-            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails details)
+            if (args.TaskInstance.TriggerDetails is AppServiceTriggerDetails details && details.CallerPackageFamilyName == Package.Current.Id.FamilyName)
             {
-                if (details.CallerPackageFamilyName == Package.Current.Id.FamilyName)
-                {
-                    AppServiceDeferral = args.TaskInstance.GetDeferral();
-                    args.TaskInstance.Canceled += OnTaskCanceled;
-                    Connection = details.AppServiceConnection;
-                    AppServiceConnected?.Invoke(this, args.TaskInstance.TriggerDetails as AppServiceTriggerDetails);
-                }
+                AppServiceDeferral = args.TaskInstance.GetDeferral();
+                args.TaskInstance.Canceled += OnTaskCanceled;
+                Connection = details.AppServiceConnection;
+                AppServiceConnected?.Invoke(this, args.TaskInstance.TriggerDetails as AppServiceTriggerDetails);
             }
         }
     }

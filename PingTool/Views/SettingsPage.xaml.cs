@@ -15,64 +15,50 @@ using Windows.UI.Xaml.Navigation;
 
 namespace PingTool.Views
 {
-    // TODO WTS: Add other settings as necessary. For help see https://github.com/Microsoft/WindowsTemplateStudio/blob/release/docs/UWP/pages/settings-codebehind.md
-    // TODO WTS: Change the URL for your privacy policy in the Resource File, currently set to https://YourPrivacyUrlGoesHere
     public sealed partial class SettingsPage : Page, INotifyPropertyChanged
     {
         private UserDataService UserDataService => Singleton<UserDataService>.Instance;
-
         private IdentityService IdentityService => Singleton<IdentityService>.Instance;
-
         private ElementTheme _elementTheme = ThemeSelectorService.Theme;
         private bool _isLoggedIn;
         private bool _isBusy;
         private UserData _user;
-
         public ElementTheme ElementTheme
         {
             get { return _elementTheme; }
-
             set { Set(ref _elementTheme, value); }
         }
-
         private string _versionDescription;
 
         public string VersionDescription
         {
             get { return _versionDescription; }
-
             set { Set(ref _versionDescription, value); }
         }
-
         public bool IsLoggedIn
         {
             get { return _isLoggedIn; }
             set { Set(ref _isLoggedIn, value); }
         }
-
         public bool IsBusy
         {
             get { return _isBusy; }
             set { Set(ref _isBusy, value); }
         }
-
         public UserData User
         {
             get { return _user; }
             set { Set(ref _user, value); }
         }
-
         public SettingsPage()
         {
             InitializeComponent();
         }
-
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             await InitializeAsync();
             AutoStartPing.IsOn = await ApplicationData.Current.LocalSettings.ReadAsync<bool>("IsPingAutoStart");
         }
-
         private async Task InitializeAsync()
         {
             VersionDescription = GetVersionDescription();
@@ -96,7 +82,6 @@ namespace PingTool.Views
         private async void ThemeChanged_CheckedAsync(object sender, RoutedEventArgs e)
         {
             var param = (sender as RadioButton)?.CommandParameter;
-
             if (param != null)
             {
                 await ThemeSelectorService.SetThemeAsync((ElementTheme)param);
@@ -145,22 +130,18 @@ namespace PingTool.Views
             IdentityService.LoggedOut -= OnLoggedOut;
             UserDataService.UserDataUpdated -= OnUserDataUpdated;
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         private void Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (Equals(storage, value))
             {
                 return;
             }
-
             storage = value;
             OnPropertyChanged(propertyName);
         }
 
         private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
         private async void ToggleSwitch_ToggledAsync(object sender, RoutedEventArgs e)
         {
             var toggleSwitch = sender as ToggleSwitch;
