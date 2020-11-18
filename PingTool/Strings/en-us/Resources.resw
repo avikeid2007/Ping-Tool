@@ -150,7 +150,7 @@
     <comment>About this application title for Settings</comment>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>Settings page placeholder text.  Your app description goes here.</value>
+    <value>Ping Legacy gives a legacy experience to test ping to get connection status and quality to network or internet.</value>
     <comment>About this application description for Settings</comment>
   </data>
   <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
@@ -215,5 +215,9 @@
   <data name="Shell_DataUsage.Content" xml:space="preserve">
     <value>DataUsage</value>
     <comment>Navigation view item name for DataUsage</comment>
+  </data>
+  <data name="Shell_History.Content" xml:space="preserve">
+    <value>History</value>
+    <comment>Navigation view item name for History</comment>
   </data>
 </root>
