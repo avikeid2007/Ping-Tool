@@ -195,13 +195,11 @@ namespace PingTool
                 await OnStartCommandExecutedAsync();
             }
         }
-
         private async Task NotifyUIAsync(Action action)
         {
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                                () => action());
         }
-
         private async Task SetNetworkInfoAsync()
         {
             try
@@ -271,7 +269,7 @@ namespace PingTool
             };
             await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                                 () => (PingCollaction ?? (PingCollaction = new ObservableCollection<PingMassage>())).Add(reply));
-            SQLiteHelper.Save(reply);
+            await NotifyUIAsync(() => SQLiteHelper.Save(reply));
         }
         private async Task OnStartCommandExecutedAsync()
         {
@@ -286,7 +284,7 @@ namespace PingTool
                     request.Add("isStop", "false");
                     await App.Connection.SendMessageAsync(request);
                     IsPingStarted = true;
-
+                    await DeleteOlderHistoryAsync();
                 }
                 else
                 {
@@ -301,6 +299,17 @@ namespace PingTool
                 IsPingStarted = false;
             }
         }
+
+        private async Task DeleteOlderHistoryAsync()
+        {
+            try
+            {
+                await NotifyUIAsync(() => SQLiteHelper.DeleteOld(9));
+            }
+            catch
+            { }
+        }
+
         private bool IsValidHost(string url, string pattern)
         {
             var reg = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);

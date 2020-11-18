@@ -169,6 +169,7 @@
     <Compile Include="Services\ThemeSelectorService.cs" />
     <Compile Include="Services\UserDataService.cs" />
     <Compile Include="ViewModels\DataUsageViewModel.cs" />
+    <Compile Include="ViewModels\HistoryViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\DataUsagePage.xaml.cs">
       <DependentUpon>DataUsagePage.xaml</DependentUpon>

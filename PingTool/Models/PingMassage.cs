@@ -21,11 +21,8 @@ namespace PingTool.Models
             get { return _id; }
             set
             {
-                if (_id != value)
-                {
-                    _id = value;
-                    OnPropertyChanged();
-                }
+                _id = value;
+                OnPropertyChanged();
             }
         }
         public DateTimeOffset Date

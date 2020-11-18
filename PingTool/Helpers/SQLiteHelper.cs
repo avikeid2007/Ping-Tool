@@ -39,12 +39,18 @@ namespace PingTool.Helpers
                 }
             }
         }
-        public static void Delete(PingMassage post)
+        public static void DeleteOld(int maxCount)
         {
             using (var db = DbConnection)
             {
-                db.Delete(post);
+                var oldHistory = SQLiteHelper.GetAllDistinct().OrderByDescending(x => x.Date).Skip(maxCount).ToList();
+                oldHistory.ForEach(x => Delete(db, x.PingId));
             }
+        }
+        private static void Delete(SQLiteConnection db, Guid pingId)
+        {
+            var ping = db.Table<PingMassage>().Where(x => x.PingId == pingId).ToList();
+            ping.ForEach(x => db.Delete(x));
         }
         public static IEnumerable<PingMassage> GetAll(Guid? pingId = null)
         {
@@ -53,7 +59,7 @@ namespace PingTool.Helpers
                 var quary = db.Table<PingMassage>();
                 if (pingId != null)
                 {
-                    quary = quary.Where(x => x.PingId == pingId);
+                    quary = quary.Where(x => x.PingId == pingId).OrderBy(x => x.Id);
                 }
                 return quary.ToList();
             }
@@ -76,7 +82,7 @@ namespace PingTool.Helpers
         {
             using (var db = DbConnection)
             {
-                return db.Table<PingMassage>().GroupBy(x => x.PingId).Select(x => x.First()).ToList();
+                return db.Table<PingMassage>().GroupBy(x => x.PingId).Select(x => x.First()).OrderByDescending(x => x.Date).ToList();
             }
         }
     }
