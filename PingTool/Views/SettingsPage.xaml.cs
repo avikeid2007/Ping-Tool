@@ -29,7 +29,6 @@ namespace PingTool.Views
             set { Set(ref _elementTheme, value); }
         }
         private string _versionDescription;
-        private string _historyCount;
 
         public string VersionDescription
         {

@@ -48,6 +48,10 @@
                 x:Uid="Shell_History"
                 helpers:NavHelper.NavigateTo="views:HistoryPage"
                 Icon="Clock" />
+            <winui:NavigationViewItem
+                x:Uid="Shell_Suggestion"
+                helpers:NavHelper.NavigateTo="views:SuggestionPage"
+                Icon="Message" />
         </winui:NavigationView.MenuItems>
 
         <winui:NavigationView.PaneFooter>
@@ -118,7 +122,11 @@
                         </Grid>
                     </Button>
                 </Grid>
-                
+                <NavigationViewItem
+                    Content="Rate us"
+                    Icon="Like"
+                    Tapped="NavigationViewItem_TappedAsync" />
+
             </StackPanel>
         </winui:NavigationView.PaneFooter>
         <Grid>

@@ -50,7 +50,7 @@
             </ListView.ItemTemplate>
 
         </ListView>
-        <Grid Grid.Column="1" Visibility="{x:Bind ViewModel.IsReplyVisible}">
+        <Grid Grid.Column="1" Visibility="{x:Bind ViewModel.IsReplyVisible, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
