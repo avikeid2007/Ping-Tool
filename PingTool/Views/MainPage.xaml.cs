@@ -17,6 +17,11 @@ namespace PingTool.Views
             await ViewModel.OnNavigatedToAsync(e);
             base.OnNavigatedTo(e);
         }
+        protected override async void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            await ViewModel.OnNavigatedFromAsync(e);
+            base.OnNavigatedFrom(e);
+        }
 
     }
 }
