@@ -116,8 +116,16 @@
                     Margin="{StaticResource XSmallTopMargin}"
                     Style="{ThemeResource BodyTextBlockStyle}" />
 
-                <HyperlinkButton x:Uid="Settings_PrivacyTermsLink" Margin="{StaticResource XSmallTopMargin}" />
+                <HyperlinkButton
+                    x:Uid="Settings_PrivacyTermsLink"
+                    Margin="{StaticResource XSmallTopMargin}"
+                    NavigateUri="https://avikeid2007.github.io/Ping-Tool/PrivacyPolicy" />
+                <HyperlinkButton
+                    Margin="{StaticResource XSmallTopMargin}"
+                    Content="GitHub Repository"
+                    NavigateUri="https://github.com/avikeid2007/Ping-Tool" />
             </StackPanel>
         </StackPanel>
+
     </Grid>
 </Page>

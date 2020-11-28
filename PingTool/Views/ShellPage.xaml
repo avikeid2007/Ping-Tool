@@ -24,10 +24,12 @@
     <winui:NavigationView
         x:Name="navigationView"
         Background="{ThemeResource SystemControlAcrylicWindowBrush}"
+        ExpandedModeThresholdWidth="1200"
         IsBackButtonVisible="Visible"
         IsBackEnabled="{x:Bind IsBackEnabled, Mode=OneWay}"
         IsSettingsVisible="True"
         ItemInvoked="OnItemInvoked"
+        OpenPaneLength="180"
         SelectedItem="{x:Bind Selected, Mode=OneWay}">
         <winui:NavigationView.MenuItems>
             <!--
