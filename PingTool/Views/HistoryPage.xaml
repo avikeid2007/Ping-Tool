@@ -14,11 +14,22 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Last 10 Responses: " />
+        <TextBlock
+            x:Name="TemplateText"
+            FontSize="{StaticResource LargeFontSize}"
+            Visibility="Collapsed" />
+
+        <TextBlock
+            x:Name="HeaderTxt"
+            FontSize="{StaticResource LargeFontSize}"
+            Text="Last 10 Responses: " />
         <ListView
-            Grid.Row="1"
+            x:Name="ResponseList"
+            Grid.Row="3"
             ItemsSource="{x:Bind ViewModel.HistoryCollaction, Mode=OneWay}"
             SelectedItem="{Binding SelectedMassage, Mode=TwoWay}">
             <ListView.ItemTemplate>
@@ -29,18 +40,18 @@
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock FontSize="{StaticResource LargeFontSize}">
+                        <TextBlock FontSize="{Binding ElementName=TemplateText, Path=FontSize}">
                             <Run Text="IP:" />
                             <Run Text="{x:Bind IpAddress}" />
                         </TextBlock>
                         <TextBlock
                             Grid.Column="1"
-                            FontSize="{StaticResource LargeFontSize}"
+                            FontSize="{Binding ElementName=TemplateText, Path=FontSize}"
                             Text=" | " />
                         <TextBlock
                             Grid.Column="2"
                             Margin="16,0,0,0"
-                            FontSize="{StaticResource LargeFontSize}">
+                            FontSize="{Binding ElementName=TemplateText, Path=FontSize}">
                             <Run Text="Date:" />
                             <Run Text="{x:Bind Date.DateTime}" />
                         </TextBlock>
@@ -50,7 +61,10 @@
             </ListView.ItemTemplate>
 
         </ListView>
-        <Grid Grid.Column="1" Visibility="{x:Bind ViewModel.IsReplyVisible, Mode=OneWay}">
+        <Grid
+            x:Name="ReplyGrid"
+            Grid.Column="1"
+            Visibility="{x:Bind ViewModel.IsReplyVisible, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="auto" />
@@ -68,6 +82,7 @@
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="Copy" />
                     <TextBlock
+                        x:Name="Btntxt"
                         Margin="{StaticResource XSmallLeftMargin}"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource SmallFontSize}"
@@ -89,16 +104,16 @@
                 </StackPanel>
             </Button>
         </Grid>
-
         <ListView
-            Grid.Row="1"
+            x:Name="ReplyList"
+            Grid.Row="3"
             Grid.Column="1"
             ItemsSource="{Binding PingCollaction, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock
                         Margin="0"
-                        FontSize="{StaticResource SemiLargeFontSize}"
+                        FontSize="{Binding ElementName=TemplateText, Path=FontSize}"
                         Foreground="{Binding Time, Converter={StaticResource TextColorConverter}}"
                         Text="{Binding Response}" />
                 </DataTemplate>
@@ -109,5 +124,92 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTxt.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="HeaderTxt.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderTxt.(Grid.Row)" Value="0" />
+                        <Setter Target="HeaderTxt.Margin" Value="56 0 0 0" />
+                        <Setter Target="ResponseList.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ResponseList.(Grid.Column)" Value="0" />
+                        <Setter Target="ResponseList.(Grid.Row)" Value="1" />
+
+
+                        <Setter Target="ReplyGrid.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ReplyGrid.(Grid.Column)" Value="0" />
+                        <Setter Target="ReplyGrid.(Grid.Row)" Value="2" />
+
+                        <Setter Target="ReplyList.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ReplyList.(Grid.Column)" Value="0" />
+                        <Setter Target="ReplyList.(Grid.Row)" Value="3" />
+                        <Setter Target="TemplateText.FontSize" Value="{StaticResource MediumFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NormalMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTxt.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderTxt.(Grid.Row)" Value="0" />
+                        <Setter Target="HeaderTxt.Margin" Value="0 0 0 0" />
+
+                        <Setter Target="ResponseList.(Grid.Column)" Value="0" />
+                        <Setter Target="ResponseList.(Grid.Row)" Value="3" />
+
+                        <Setter Target="ReplyGrid.(Grid.Column)" Value="1" />
+                        <Setter Target="ReplyGrid.(Grid.Row)" Value="0" />
+
+                        <Setter Target="ReplyList.(Grid.Column)" Value="1" />
+                        <Setter Target="ReplyList.(Grid.Row)" Value="3" />
+                        <Setter Target="TemplateText.FontSize" Value="{StaticResource MediumFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTxt.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderTxt.(Grid.Row)" Value="0" />
+                        <Setter Target="HeaderTxt.Margin" Value="0 0 0 0" />
+                        <Setter Target="ResponseList.(Grid.Column)" Value="0" />
+                        <Setter Target="ResponseList.(Grid.Row)" Value="3" />
+
+                        <Setter Target="ReplyGrid.(Grid.Column)" Value="1" />
+                        <Setter Target="ReplyGrid.(Grid.Row)" Value="0" />
+
+                        <Setter Target="ReplyList.(Grid.Column)" Value="1" />
+                        <Setter Target="ReplyList.(Grid.Row)" Value="3" />
+                        <Setter Target="TemplateText.FontSize" Value="{StaticResource SemiLargeFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateXWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource XWideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+
+                        <Setter Target="HeaderTxt.(Grid.Column)" Value="0" />
+                        <Setter Target="HeaderTxt.(Grid.Row)" Value="0" />
+                        <Setter Target="HeaderTxt.Margin" Value="0 0 0 0" />
+                        <Setter Target="ResponseList.(Grid.Column)" Value="0" />
+                        <Setter Target="ResponseList.(Grid.Row)" Value="3" />
+
+                        <Setter Target="ReplyGrid.(Grid.Column)" Value="1" />
+                        <Setter Target="ReplyGrid.(Grid.Row)" Value="0" />
+
+                        <Setter Target="ReplyList.(Grid.Column)" Value="1" />
+                        <Setter Target="ReplyList.(Grid.Row)" Value="3" />
+                        <Setter Target="TemplateText.FontSize" Value="{StaticResource LargeFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>
