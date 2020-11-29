@@ -2,6 +2,7 @@
 
     <!--  Large size margins  -->
     <Thickness x:Key="LargeTopMargin">0,36,0,0</Thickness>
+    <Thickness x:Key="LargeLeftMargin">36,0,0,0</Thickness>
 
     <!--  Medium size margins  -->
     <Thickness x:Key="MediumLeftMargin">24,0,0,0</Thickness>

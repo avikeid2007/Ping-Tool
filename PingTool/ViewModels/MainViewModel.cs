@@ -2,6 +2,8 @@
 using BasicMvvm.Commands;
 using PingTool.Helpers;
 using PingTool.Models;
+using PingTool.Services;
+using PingTool.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -18,7 +20,9 @@ using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace PingTool
@@ -37,7 +41,7 @@ namespace PingTool
         private ObservableCollection<NetworkInterface> _localLANCollection;
         private NetworkInterface _selectedLocalLAN;
         private bool _hasInternetAccess;
-        private bool _isPingAutoStart;
+        private bool? _isPingAutoStart;
         private readonly string _urlRegex = @"^(http|https|ftp|)\://|[a-zA-Z0-9\-\.]+\.[a-zA-Z](:[a-zA-Z0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*[^\.\,\)\(\s]$";
         private readonly string _ipRegex = @"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}";
         public bool HasInternetAccess
@@ -163,14 +167,30 @@ namespace PingTool
                 OnPropertyChanged();
             }
         }
+        private bool _isCompactMode;
+        public bool IsCompactMode
+        {
+            get { return _isCompactMode; }
+            set
+            {
+                _isCompactMode = value;
+                OnPropertyChanged();
+            }
+        }
         public ICommand StartCommand => new AsyncCommand(OnStartCommandExecutedAsync);
         public ICommand ClearCommand => new DelegateCommand(OnClearCommandExecuted);
         public ICommand CopyCommand => new DelegateCommand(OnCopyCommandExecuted);
         public ICommand ExportCommand => new AsyncCommand(OnExportCommandExecuteAsync);
         public ICommand KeyDownCommand => new AsyncCommand<KeyRoutedEventArgs>(OnKeyDownCommandExecuteAsync);
+        public ICommand CompactCommand => new AsyncCommand(OnCompactCommandExecutedAsync);
         public async Task OnNavigatedToAsync(NavigationEventArgs _)
         {
-            _isPingAutoStart = await ApplicationData.Current.LocalSettings.ReadAsync<bool>("IsPingAutoStart");
+            _isPingAutoStart = await ApplicationData.Current.LocalSettings.ReadAsync<bool?>("IsPingAutoStart");
+            if (_isPingAutoStart == null)
+            {
+                _isPingAutoStart = true;
+                await ApplicationData.Current.LocalSettings.SaveAsync("IsPingAutoStart", true);
+            }
             var address = await ApplicationData.Current.LocalSettings.ReadAsync<string>(nameof(HostNameOrAddress));
             if (string.IsNullOrEmpty(address))
             {
@@ -189,7 +209,7 @@ namespace PingTool
             await SetNetworkInfoAsync();
             NetworkInformation.NetworkStatusChanged -= NetworkInformation_NetworkStatusChangedAsync;
             NetworkInformation.NetworkStatusChanged += NetworkInformation_NetworkStatusChangedAsync;
-            if (_isPingAutoStart)
+            if (_isPingAutoStart != null && _isPingAutoStart.Value)
             {
                 await Task.Delay(2000);
                 await OnStartCommandExecutedAsync();
@@ -273,15 +293,18 @@ namespace PingTool
         }
         private async Task OnStartCommandExecutedAsync()
         {
-            ValueSet request = new ValueSet();
+            ValueSet request;
             if (!IsPingStarted)
             {
                 if (IsValidHostNameOrAddress(HostNameOrAddress))
                 {
+                    request = new ValueSet
+                    {
+                        { "host", HostNameOrAddress.Replace("http://", "").Replace("https://", "").TrimEnd('/') },
+                        { "isStop", "false" }
+                    };
                     _pingId = Guid.NewGuid();
                     _pingDate = DateTimeOffset.Now;
-                    request.Add("host", HostNameOrAddress.Replace("http://", "").Replace("https://", "").TrimEnd('/'));
-                    request.Add("isStop", "false");
                     await App.Connection.SendMessageAsync(request);
                     IsPingStarted = true;
                     await DeleteOlderHistoryAsync();
@@ -293,8 +316,11 @@ namespace PingTool
             }
             else
             {
-                request.Add("host", "");
-                request.Add("isStop", "false");
+                request = new ValueSet
+                {
+                    { "host", "" },
+                    { "isStop", "false" }
+                };
                 await App.Connection.SendMessageAsync(request);
                 IsPingStarted = false;
             }
@@ -339,6 +365,30 @@ namespace PingTool
                 await FileHelper.SaveFileAsync(text, "ping.txt");
             }
         }
+        private async Task OnCompactCommandExecutedAsync()
+        {
+            if (!IsCompactMode)
+            {
+                var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                preferences.CustomSize = new Windows.Foundation.Size(500, 500);
+                await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, preferences);
+                NavigationService.Navigate(typeof(MainPage), null, new SuppressNavigationTransitionInfo());
+                IsCompactMode = true;
+                if (!IsPingStarted)
+                {
+                    await OnStartCommandExecutedAsync();
+                }
+            }
+            else
+            {
+                var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.Default);
+                await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.Default, preferences);
+                NavigationService.GoBack();
+                IsCompactMode = false;
+            }
+
+
+        }
         private void OnCopyCommandExecuted()
         {
             FileHelper.CopyText(IpAddress ?? "");
@@ -365,6 +415,12 @@ namespace PingTool
                 { "isStop", "false" }
             };
             await App.Connection.SendMessageAsync(request);
+        }
+
+        internal async Task OnNavigatedFromAsync(NavigationEventArgs e)
+        {
+            if (IsPingStarted)
+                await OnStartCommandExecutedAsync();
         }
     }
 }

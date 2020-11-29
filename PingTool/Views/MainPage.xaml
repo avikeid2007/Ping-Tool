@@ -2,7 +2,7 @@
     x:Class="PingTool.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-   
+    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
@@ -10,8 +10,8 @@
     xmlns:net="using:System.Net.NetworkInformation"
     Style="{StaticResource PageStyle}"
     mc:Ignorable="d">
-    
-    <Grid x:Name="ContentArea" Margin="{StaticResource SmallLeftTopRightBottomMargin}">
+
+    <Grid x:Name="ContentArea" Margin="{StaticResource SmallLeftRightMargin}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
@@ -21,9 +21,13 @@
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid Grid.ColumnSpan="2">
+        <Grid
+            x:Name="AddressHeaderGrid"
+            Grid.ColumnSpan="2"
+            VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
@@ -32,7 +36,7 @@
             <TextBox
                 x:Name="TxtAddress"
                 Grid.Column="1"
-                Width="200"
+                Width="180"
                 Margin="{StaticResource MediumLeftMargin}"
                 VerticalAlignment="Center"
                 PlaceholderText="Ping Host Ip/Address"
@@ -45,17 +49,16 @@
                 </i:Interaction.Behaviors>
             </TextBox>
             <Button
+                x:Name="StartBtn"
                 Grid.Column="2"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                Command="{Binding StartCommand}">
+                Command="{Binding StartCommand}"
+                ToolTipService.Placement="Mouse"
+                ToolTipService.ToolTip="Start/Stop ping">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon x:Name="StartIcon" />
-                    <TextBlock
-                        x:Name="StartTest"
-                        Margin="{StaticResource XSmallLeftMargin}"
-                        VerticalAlignment="Center"
-                        FontSize="{StaticResource SmallFontSize}" />
+                    <TextBlock x:Name="StartTest" FontSize="{StaticResource SmallFontSize}" />
 
                 </StackPanel>
                 <i:Interaction.Behaviors>
@@ -70,7 +73,11 @@
                         <ic:ChangePropertyAction
                             PropertyName="Text"
                             TargetObject="{Binding ElementName=StartTest}"
-                            Value="Pause" />
+                            Value="Stop ping" />
+                        <!--<ic:ChangePropertyAction
+                            PropertyName="ToolTipService.ToolTip"
+                            TargetObject="{Binding ElementName=StartBtn}"
+                            Value="Stop ping" />-->
                         <ic:ChangePropertyAction
                             PropertyName="IsEnabled"
                             TargetObject="{Binding ElementName=TxtAddress}"
@@ -87,44 +94,100 @@
                         <ic:ChangePropertyAction
                             PropertyName="Text"
                             TargetObject="{Binding ElementName=StartTest}"
-                            Value="Play" />
+                            Value="Start ping" />
+                        <!--<ic:ChangePropertyAction
+                            PropertyName="ToolTipService.ToolTip"
+                            TargetObject="{Binding ElementName=StartBtn}"
+                            Value="Start ping" />-->
                         <ic:ChangePropertyAction
                             PropertyName="IsEnabled"
                             TargetObject="{Binding ElementName=TxtAddress}"
                             Value="true" />
                     </ic:DataTriggerBehavior>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding IsCompactMode}"
+                        ComparisonCondition="Equal"
+                        Value="true">
+                        <ic:ChangePropertyAction
+                            PropertyName="Margin"
+                            TargetObject="{Binding ElementName=AddressHeaderGrid}"
+                            Value="0 40 0 0" />
+                        <!--<ic:ChangePropertyAction
+                            PropertyName="ToolTipService.ToolTip"
+                            TargetObject="{Binding ElementName=CompactBtn}"
+                            Value="Return back to main screen" />-->
+                    </ic:DataTriggerBehavior>
+                    <ic:DataTriggerBehavior
+                        Binding="{Binding IsCompactMode}"
+                        ComparisonCondition="Equal"
+                        Value="false">
+                        <ic:ChangePropertyAction
+                            PropertyName="Margin"
+                            TargetObject="{Binding ElementName=AddressHeaderGrid}"
+                            Value="0 0 0 0" />
+                        <!--<ic:ChangePropertyAction
+                            PropertyName="ToolTipService.ToolTip"
+                            TargetObject="{Binding ElementName=CompactBtn}"
+                            Value="Show in compact window" />-->
+                    </ic:DataTriggerBehavior>
                 </i:Interaction.Behaviors>
+
             </Button>
             <Button
                 Grid.Column="3"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                Command="{Binding ClearCommand}">
+                Command="{Binding ClearCommand}"
+                ToolTipService.Placement="Mouse"
+                ToolTipService.ToolTip="Clear area">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="ClearSelection" />
                     <TextBlock
                         Margin="{StaticResource XSmallLeftMargin}"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource SmallFontSize}"
-                        Text="Clear" />
+                        Text="Clear Area"
+                        Visibility="{Binding Path=Visibility, ElementName=StartTest}" />
                 </StackPanel>
             </Button>
             <Button
                 Grid.Column="4"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                Command="{Binding ExportCommand}">
+                Command="{Binding ExportCommand}"
+                ToolTipService.Placement="Mouse"
+                ToolTipService.ToolTip="Export data in file">
                 <StackPanel Orientation="Horizontal">
                     <SymbolIcon Symbol="MoveToFolder" />
                     <TextBlock
                         Margin="{StaticResource XSmallLeftMargin}"
                         VerticalAlignment="Center"
                         FontSize="{StaticResource SmallFontSize}"
-                        Text="Export" />
+                        Text="Export file"
+                        Visibility="{Binding Path=Visibility, ElementName=StartTest}" />
+                </StackPanel>
+            </Button>
+            <Button
+                x:Name="CompactBtn"
+                Grid.Column="5"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Command="{Binding CompactCommand}"
+                ToolTipService.Placement="Mouse"
+                ToolTipService.ToolTip="Show/Hide Compact window">
+                <StackPanel Orientation="Horizontal">
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE963;" />
+                    <TextBlock
+                        Margin="{StaticResource XSmallLeftMargin}"
+                        VerticalAlignment="Center"
+                        FontSize="{StaticResource SmallFontSize}"
+                        Text="Compact Mode"
+                        Visibility="{Binding Path=Visibility, ElementName=StartTest}" />
                 </StackPanel>
             </Button>
         </Grid>
         <Grid
+            x:Name="IpDerailAreaGrid"
             Grid.Row="1"
             Padding="{StaticResource MediumBottomMargin}"
             BorderBrush="#ccc"
@@ -137,18 +200,25 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="240" />
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock FontSize="{StaticResource LargeFontSize}" Text="IP Address" />
+            <TextBlock
+                x:Name="IpHeaderTxt"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
+                Text="IP Address" />
             <TextBlock
                 Grid.Column="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text=":" />
-            <StackPanel Grid.Column="2" Orientation="Horizontal">
+            <StackPanel
+                Grid.Column="2"
+                VerticalAlignment="Bottom"
+                Orientation="Horizontal">
                 <TextBlock
+                    x:Name="IpTxt"
                     FontSize="{StaticResource LargeFontSize}"
                     Text="{x:Bind ViewModel.IpAddress, Mode=OneWay}"
                     Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}" />
@@ -164,43 +234,43 @@
 
             <TextBlock
                 Grid.Row="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text="IP Address" />
 
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text=":" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="2"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text="{x:Bind ViewModel.IpType.ToUpper(), Mode=OneWay}"
                 Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}" />
 
             <TextBlock
                 Grid.Row="2"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text="Profile" />
             <TextBlock
                 Grid.Row="2"
                 Grid.Column="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text=":" />
             <StackPanel
                 Grid.Row="2"
                 Grid.Column="2"
                 Orientation="Horizontal"
                 Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}">
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.ProfileName, Mode=OneWay}" />
+                <TextBlock FontSize="{Binding ElementName=IpTxt, Path=FontSize}" Text="{x:Bind ViewModel.ProfileName, Mode=OneWay}" />
                 <TextBlock
                     x:Name="ConnectionIcon"
                     Margin="{StaticResource XSmallLeftMargin}"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    FontSize="{StaticResource SemiLargeFontSize}"
+                    FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                     Text="&#xE839;" />
 
                 <i:Interaction.Behaviors>
@@ -262,12 +332,12 @@
             </StackPanel>
             <TextBlock
                 Grid.Row="3"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text="Data Usages(MBs)" />
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=IpTxt, Path=FontSize}"
                 Text=":" />
             <StackPanel
                 Grid.Row="3"
@@ -275,26 +345,30 @@
                 Orientation="Horizontal"
                 Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}">
 
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay}" />
+                <TextBlock FontSize="{Binding ElementName=IpTxt, Path=FontSize}" Text="{x:Bind ViewModel.TotalReceivedBytes, Mode=OneWay}" />
                 <SymbolIcon Symbol="Download" />
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="/" />
+                <TextBlock FontSize="{Binding ElementName=IpTxt, Path=FontSize}" Text="/" />
 
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalSentBytes, Mode=OneWay}" />
+                <TextBlock FontSize="{Binding ElementName=IpTxt, Path=FontSize}" Text="{x:Bind ViewModel.TotalSentBytes, Mode=OneWay}" />
                 <SymbolIcon Symbol="Upload" />
             </StackPanel>
 
 
 
         </Grid>
-        <Grid Grid.Row="2">
+        <Grid x:Name="ConnectionStatusGrid" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Network Status:" />
+            <TextBlock
+                FontSize="{StaticResource LargeFontSize}"
+                Text="Network Status:"
+                Visibility="{Binding Path=Visibility, ElementName=NetworkAdaptersHeader}" />
             <StackPanel
+                x:Name="NetworkStatus"
                 Grid.Row="1"
                 Margin="{StaticResource MediumTopBottomMargin}"
                 Padding="{StaticResource MediumBottomMargin}"
@@ -310,7 +384,7 @@
                     FontSize="80"
                     Text="&#xEC4E;" />
                 <Border
-                    Width="100"
+                    Width="{Binding ElementName=ConnectionBorder, Path=Width}"
                     VerticalAlignment="Center"
                     BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
                     BorderThickness="2" />
@@ -324,7 +398,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="36"
+                        FontSize="{StaticResource XLargeFontSize}"
                         Foreground="Green"
                         Text="&#xE839;" />
                     <TextBlock
@@ -343,6 +417,7 @@
                         Visibility="{x:Bind ViewModel.HasInternetAccess, Mode=OneWay}" />
                 </StackPanel>
                 <Border
+                    x:Name="ConnectionBorder"
                     Width="100"
                     Margin="{StaticResource XSmallLeftMargin}"
                     VerticalAlignment="Center"
@@ -353,28 +428,30 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    FontSize="80"
+                    FontSize="{Binding ElementName=CurrentPc, Path=FontSize}"
                     Text="&#xE774;" />
 
             </StackPanel>
             <TextBlock
+                x:Name="NetworkAdaptersHeader"
                 Grid.Row="2"
                 FontSize="{StaticResource LargeFontSize}"
                 Text="Other Network Adapters:" />
             <GridView
                 x:Name="NetworkConnectionGrid"
                 Grid.Row="3"
+                animations:ReorderGridAnimation.Duration="500"
                 ItemsSource="{Binding LocalLANCollection}">
                 <GridView.ItemTemplate>
                     <DataTemplate x:DataType="net:NetworkInterface">
-                        <StackPanel Width="300" Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock
                                 x:Name="LanIcon"
                                 Margin="{StaticResource XSmallLeftMargin}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                FontSize="80"
+                                FontSize="{Binding ElementName=CurrentPc, Path=FontSize}"
                                 Text="&#xEB56;" />
                             <StackPanel
                                 Margin="{StaticResource XSmallLeftMargin}"
@@ -439,18 +516,21 @@
                 </GridView.ItemTemplate>
             </GridView>
         </Grid>
-
+        <TextBlock
+            x:Name="TemplateText"
+            FontSize="{StaticResource SemiLargeFontSize}"
+            Visibility="Collapsed" />
         <ListView
+            x:Name="PingCollectionList"
             Grid.Row="1"
             Grid.RowSpan="2"
             Grid.Column="1"
-            Grid.ColumnSpan="3"
             ItemsSource="{Binding PingCollaction, Mode=OneWay}">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <TextBlock
                         Margin="0"
-                        FontSize="{StaticResource SemiLargeFontSize}"
+                        FontSize="{Binding Path=FontSize, ElementName=TemplateText}"
                         Foreground="{Binding Time, Converter={StaticResource TextColorConverter}}"
                         Text="{Binding Response}" />
                 </DataTemplate>
@@ -461,19 +541,71 @@
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
         </ListView>
-        <!--<Button
-            Grid.Row="1"
-            Command="{Binding StartCommand}"
-            Content="Start" />
-        <Button
-            Grid.Row="1"
-            Grid.Column="1"
-            Content="Stop" />
-        <Button
-            Grid.Row="1"
-            Grid.Column="2"
-            Click="Button_Click"
-            Content="Close" />-->
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="IpDerailAreaGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="ConnectionStatusGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="PingCollectionList.(Grid.Column)" Value="0" />
+                        <Setter Target="PingCollectionList.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="TemplateText.FontSize" Value="{StaticResource MediumFontSize}" />
+                        <Setter Target="StartTest.Visibility" Value="Collapsed" />
+
+
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NormalMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="CurrentPc.FontSize" Value="32" />
+                        <Setter Target="IpTxt.FontSize" Value="{StaticResource MediumFontSize}" />
+                        <Setter Target="TemplateText.FontSize" Value="14" />
+                        <Setter Target="ConnectionBorder.Width" Value="60" />
+                        <Setter Target="ConnectionStatusIcon.FontSize" Value="{StaticResource SemiLargeFontSize}" />
+                        <!--<Setter Target="IpDerailAreaGrid.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="ConnectionStatusGrid.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="NetworkConnectionGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="NetworkAdaptersHeader.Visibility" Value="Collapsed" />
+                        <Setter Target="PingCollectionList.(Grid.Column)" Value="0" />
+                        <Setter Target="PingCollectionList.(Grid.ColumnSpan)" Value="2" />
+                        <Setter Target="PingCollectionList.(Grid.Row)" Value="3" />-->
+                        <!--<Setter Target="GridPocoOutput.(Grid.ColumnSpan)" Value="1" />
+                        <Setter Target="GridPocoSetting.(Grid.RowSpan)" Value="3" />-->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="CurrentPc.FontSize" Value="56" />
+                        <Setter Target="IpTxt.FontSize" Value="{StaticResource SemiLargeFontSize}" />
+                        <Setter Target="TemplateText.FontSize" Value="{StaticResource MediumFontSize}" />
+                        <Setter Target="ConnectionStatusIcon.FontSize" Value="{StaticResource LargeFontSize}" />
+                        <Setter Target="ConnectionBorder.Width" Value="80" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateXWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource XWideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="CurrentPc.FontSize" Value="80" />
+                        <Setter Target="IpTxt.FontSize" Value="{StaticResource LargeFontSize}" />
+                        <Setter Target="TemplateText.FontSize" Value="{StaticResource SemiLargeFontSize}" />
+                        <Setter Target="ConnectionBorder.Width" Value="100" />
+                        <Setter Target="ConnectionStatusIcon.FontSize" Value="{StaticResource XLargeFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 
 </Page>
