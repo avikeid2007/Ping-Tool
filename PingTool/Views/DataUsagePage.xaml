@@ -26,12 +26,17 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <TextBlock FontSize="{StaticResource XLargeFontSize}" Text="Last 10 days data usages:" />
+        <TextBlock
+            x:Name="HeaderTxt"
+            Grid.ColumnSpan="3"
+            FontSize="{StaticResource XLargeFontSize}"
+            Text="Last 10 days data usages:" />
         <Grid
+            x:Name="UsegesGrid"
             Grid.Row="1"
             Grid.Column="0"
             Padding="{StaticResource MediumBottomMargin}">
@@ -43,42 +48,45 @@
                 <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="20" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock FontSize="{StaticResource LargeFontSize}" Text="Today Data Usages(MBs)" />
+            <TextBlock
+                x:Name="TodayTxt"
+                FontSize="{StaticResource LargeFontSize}"
+                Text="Today Data Usages(MBs)" />
             <TextBlock
                 Grid.Column="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=TodayTxt, Path=FontSize}"
                 Text=":" />
             <StackPanel Grid.Column="2" Orientation="Horizontal">
 
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TodayDownload.DataUse, Mode=OneWay}" />
+                <TextBlock FontSize="{Binding ElementName=TodayTxt, Path=FontSize}" Text="{x:Bind ViewModel.TodayDownload.DataUse, Mode=OneWay}" />
                 <SymbolIcon Symbol="Download" />
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="/" />
+                <TextBlock FontSize="{Binding ElementName=TodayTxt, Path=FontSize}" Text="/" />
 
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TodayUpload.DataUse, Mode=OneWay}" />
+                <TextBlock FontSize="{Binding ElementName=TodayTxt, Path=FontSize}" Text="{x:Bind ViewModel.TodayUpload.DataUse, Mode=OneWay}" />
                 <SymbolIcon Symbol="Upload" />
             </StackPanel>
             <TextBlock
                 Grid.Row="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=TodayTxt, Path=FontSize}"
                 Text="Total Data Usages(MBs)" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
-                FontSize="{StaticResource LargeFontSize}"
+                FontSize="{Binding ElementName=TodayTxt, Path=FontSize}"
                 Text=":" />
             <StackPanel
                 Grid.Row="1"
                 Grid.Column="2"
                 Orientation="Horizontal">
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalDownload.DataUse, Mode=OneWay}" />
+                <TextBlock FontSize="{Binding ElementName=TodayTxt, Path=FontSize}" Text="{x:Bind ViewModel.TotalDownload.DataUse, Mode=OneWay}" />
                 <SymbolIcon Symbol="Download" />
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="/" />
-                <TextBlock FontSize="{StaticResource LargeFontSize}" Text="{x:Bind ViewModel.TotalUpload.DataUse, Mode=OneWay}" />
+                <TextBlock FontSize="{Binding ElementName=TodayTxt, Path=FontSize}" Text="/" />
+                <TextBlock FontSize="{Binding ElementName=TodayTxt, Path=FontSize}" Text="{x:Bind ViewModel.TotalUpload.DataUse, Mode=OneWay}" />
                 <SymbolIcon Symbol="Upload" />
             </StackPanel>
         </Grid>
@@ -147,31 +155,6 @@
                 </telerik:SplineAreaSeries.CategoryBinding>
             </telerik:SplineAreaSeries>
         </telerik:RadCartesianChart>
-
-        <!--<telerik:RadCartesianChart
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            PaletteName="DefaultLight">
-            <telerik:RadCartesianChart.HorizontalAxis>
-                <telerik:CategoricalAxis />
-            </telerik:RadCartesianChart.HorizontalAxis>
-            <telerik:RadCartesianChart.VerticalAxis>
-                <telerik:LinearAxis Title="Hours" />
-            </telerik:RadCartesianChart.VerticalAxis>
-            <telerik:RadCartesianChart.Grid>
-                <telerik:CartesianChartGrid MajorLinesVisibility="Y" StripLinesVisibility="Y" />
-            </telerik:RadCartesianChart.Grid>
-            <telerik:BarSeries ItemsSource="{Binding NetworkUsageCollection}">
-                <telerik:BarSeries.ValueBinding>
-                    <telerik:PropertyNameDataPointBinding PropertyName="ConnectionDuration.Hours" />
-                </telerik:BarSeries.ValueBinding>
-                <telerik:BarSeries.CategoryBinding>
-                    <telerik:PropertyNameDataPointBinding PropertyName="DateString" />
-                </telerik:BarSeries.CategoryBinding>
-            </telerik:BarSeries>
-        </telerik:RadCartesianChart>-->
-
         <telerik:RadCartesianChart
             Grid.Row="3"
             Grid.Column="0"
@@ -210,5 +193,42 @@
                 </telerik:ChartTooltipBehavior>
             </telerik:RadCartesianChart.Behaviors>
         </telerik:RadCartesianChart>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="UsegesGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="HeaderTxt.Margin" Value="56 0 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NormalMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TodayTxt.FontSize" Value="{StaticResource MediumFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TodayTxt.FontSize" Value="{StaticResource SemiLargeFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateXWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource XWideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TodayTxt.FontSize" Value="{StaticResource LargeFontSize}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>

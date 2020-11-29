@@ -369,12 +369,15 @@ namespace PingTool
         {
             if (!IsCompactMode)
             {
-
                 var preferences = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
                 preferences.CustomSize = new Windows.Foundation.Size(500, 500);
                 await ApplicationView.GetForCurrentView().TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, preferences);
                 NavigationService.Navigate(typeof(MainPage), null, new SuppressNavigationTransitionInfo());
                 IsCompactMode = true;
+                if (!IsPingStarted)
+                {
+                    await OnStartCommandExecutedAsync();
+                }
             }
             else
             {

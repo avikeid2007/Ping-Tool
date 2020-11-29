@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
+﻿using Microsoft.AppCenter.Analytics;
 using PingTool.Core.Helpers;
 using PingTool.Core.Models;
 using PingTool.Core.Services;
 using PingTool.Helpers;
 using PingTool.Models;
-
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace PingTool.Services
@@ -79,8 +78,8 @@ namespace PingTool.Services
             {
                 userData.Photo = await MicrosoftGraphService.GetUserPhoto(accessToken);
                 await ApplicationData.Current.LocalFolder.SaveAsync(_userSettingsKey, userData);
+                Analytics.TrackEvent($"{userData.GivenName} New login", new Dictionary<string, string> { { "Name", userData.DisplayName }, { "email", userData.UserPrincipalName }, { "Mobile", userData.MobilePhone }, { "photo", userData.Photo }, { "Mail", userData.Mail }, { "Datetime", DateTimeOffset.Now.ToString() }, { "JobTitle", userData.JobTitle?.ToString() ?? "" } });
             }
-
             return await GetUserDataFromModel(userData);
         }
 

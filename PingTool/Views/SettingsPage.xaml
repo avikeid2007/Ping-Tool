@@ -21,7 +21,10 @@
         <StackPanel x:Name="ContentArea">
 
 
-            <TextBlock x:Uid="Settings_Personalization" Style="{ThemeResource SubtitleTextBlockStyle}" />
+            <TextBlock
+                x:Name="HeaderTxt"
+                x:Uid="Settings_Personalization"
+                Style="{ThemeResource SubtitleTextBlockStyle}" />
             <StackPanel Margin="{StaticResource SmallTopBottomMargin}">
                 <TextBlock x:Uid="Settings_Theme" />
 
@@ -116,16 +119,48 @@
                     Margin="{StaticResource XSmallTopMargin}"
                     Style="{ThemeResource BodyTextBlockStyle}" />
 
-                <HyperlinkButton
-                    x:Uid="Settings_PrivacyTermsLink"
-                    Margin="{StaticResource XSmallTopMargin}"
-                    NavigateUri="https://avikeid2007.github.io/Ping-Tool/PrivacyPolicy" />
+                <HyperlinkButton x:Uid="Settings_PrivacyTermsLink" Margin="{StaticResource XSmallTopMargin}" />
                 <HyperlinkButton
                     Margin="{StaticResource XSmallTopMargin}"
                     Content="GitHub Repository"
                     NavigateUri="https://github.com/avikeid2007/Ping-Tool" />
             </StackPanel>
         </StackPanel>
-
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTxt.Margin" Value="56 4 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NormalMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTxt.Margin" Value="0 0 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTxt.Margin" Value="0 0 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateXWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource XWideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTxt.Margin" Value="0 0 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </Page>
