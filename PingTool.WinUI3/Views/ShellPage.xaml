@@ -1,0 +1,77 @@
+<Page
+    x:Class="PingTool.Views.ShellPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="using:PingTool.Helpers"
+    xmlns:views="using:PingTool.Views">
+
+    <Grid>
+        <NavigationView
+            x:Name="navigationView"
+            IsBackButtonVisible="Collapsed"
+            IsBackEnabled="{x:Bind IsBackEnabled, Mode=OneWay}"
+            IsSettingsVisible="True"
+            ItemInvoked="OnItemInvoked"
+            OpenPaneLength="220"
+            PaneDisplayMode="Left"
+            SelectedItem="{x:Bind Selected, Mode=OneWay}">
+            
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="Ping" helpers:NavHelper.NavigateTo="views:MainPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE968;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Data Usage" helpers:NavHelper.NavigateTo="views:DataUsagePage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9D9;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="History" helpers:NavHelper.NavigateTo="views:HistoryPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE81C;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Feedback" helpers:NavHelper.NavigateTo="views:SuggestionPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE939;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <NavigationView.PaneFooter>
+                <StackPanel Margin="0,0,0,8">
+                    <NavigationViewItem Content="Rate Us" Icon="Like" Tapped="RateUs_Tapped"/>
+                </StackPanel>
+            </NavigationView.PaneFooter>
+
+            <NavigationView.PaneHeader>
+                <Border Padding="12,8" Margin="0,0,0,4">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Border 
+                            Width="36" Height="36" 
+                            CornerRadius="8"
+                            Background="{StaticResource AccentGradientBrush}">
+                            <FontIcon 
+                                FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                                Glyph="&#xE968;" 
+                                FontSize="16"
+                                Foreground="White"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                        </Border>
+                        <TextBlock 
+                            Text="Ping Legacy" 
+                            FontWeight="Bold" 
+                            FontSize="16"
+                            VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </NavigationView.PaneHeader>
+
+            <Grid>
+                <Frame x:Name="shellFrame" />
+            </Grid>
+        </NavigationView>
+    </Grid>
+</Page>
