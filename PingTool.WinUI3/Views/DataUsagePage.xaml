@@ -1,0 +1,157 @@
+<Page
+    x:Class="PingTool.Views.DataUsagePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Padding="24,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,24">
+            <Border 
+                Width="44" Height="44" 
+                CornerRadius="10"
+                Background="{StaticResource AccentGradientBrush}">
+                <FontIcon 
+                    FontFamily="{StaticResource SymbolThemeFontFamily}" 
+                    Glyph="&#xE9D9;" 
+                    FontSize="20"
+                    Foreground="White"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Data Usage" FontSize="24" FontWeight="Bold"/>
+                <TextBlock 
+                    Text="Monitor your network consumption" 
+                    FontSize="12" 
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+            </StackPanel>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="16">
+                <!-- Today's Usage Cards -->
+                <TextBlock Text="Today" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Download Card -->
+                    <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,8,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border 
+                                    Width="40" Height="40" 
+                                    CornerRadius="10"
+                                    Background="{StaticResource SuccessGradientBrush}">
+                                    <SymbolIcon Symbol="Download" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="Downloaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
+                                <TextBlock x:Name="TodayDownload" Text="0" Style="{StaticResource StatsValueStyle}"/>
+                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Row="2" Text="Today's download" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Upload Card -->
+                    <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8,0,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border 
+                                    Width="40" Height="40" 
+                                    CornerRadius="10"
+                                    Background="{StaticResource InfoGradientBrush}">
+                                    <SymbolIcon Symbol="Upload" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="Uploaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
+                                <TextBlock x:Name="TodayUpload" Text="0" Style="{StaticResource StatsValueStyle}"/>
+                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Row="2" Text="Today's upload" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- Last 10 Days Usage Cards -->
+                <TextBlock Text="Last 10 Days" FontWeight="SemiBold" FontSize="16" Margin="0,16,0,8"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Total Download Card -->
+                    <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,8,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border 
+                                    Width="40" Height="40" 
+                                    CornerRadius="10"
+                                    Background="{StaticResource AccentGradientBrush}">
+                                    <SymbolIcon Symbol="Download" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="Total Downloaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
+                                <TextBlock x:Name="TotalDownload" Text="0" Style="{StaticResource StatsValueStyle}"/>
+                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Row="2" Text="Past 10 days" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Total Upload Card -->
+                    <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8,0,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Border 
+                                    Width="40" Height="40" 
+                                    CornerRadius="10"
+                                    Background="{StaticResource WarningGradientBrush}">
+                                    <SymbolIcon Symbol="Upload" Foreground="White"/>
+                                </Border>
+                                <TextBlock Text="Total Uploaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
+                                <TextBlock x:Name="TotalUpload" Text="0" Style="{StaticResource StatsValueStyle}"/>
+                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
+                            </StackPanel>
+                            <TextBlock Grid.Row="2" Text="Past 10 days" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>
