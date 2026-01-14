@@ -3,7 +3,7 @@
 <img src="https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/logo.png" alt="Ping legacy" width="200">
  <br/>
  <br/>
- <a href='https://www.microsoft.com/store/apps/9P1KVKT59T2M'><img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='English badge' width="150" /></a>
+ <a href='https://www.microsoft.com/store/apps/9P1KVKT59T2M'><img src='https://raw.githubusercontent.com/avikeid2007/WinDev-Utility/dev/ScreenShots/store.png' alt='English badge' width="150" /></a>
 
 </h1>
 

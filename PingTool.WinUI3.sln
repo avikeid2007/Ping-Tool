@@ -1,0 +1,40 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingTool.WinUI3", "PingTool.WinUI3\PingTool.WinUI3.csproj", "{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Debug|ARM64 = Debug|ARM64
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+		Release|ARM64 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|x64.ActiveCfg = Debug|x64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|x64.Build.0 = Debug|x64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|x64.Deploy.0 = Debug|x64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|x86.ActiveCfg = Debug|x86
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|x86.Build.0 = Debug|x86
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|x86.Deploy.0 = Debug|x86
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|ARM64.Build.0 = Debug|ARM64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Debug|ARM64.Deploy.0 = Debug|ARM64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|x64.ActiveCfg = Release|x64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|x64.Build.0 = Release|x64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|x64.Deploy.0 = Release|x64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|x86.ActiveCfg = Release|x86
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|x86.Build.0 = Release|x86
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|x86.Deploy.0 = Release|x86
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|ARM64.ActiveCfg = Release|ARM64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|ARM64.Build.0 = Release|ARM64
+		{CA4AC241-561A-4C67-BB3D-89E88B2F39FB}.Release|ARM64.Deploy.0 = Release|ARM64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
