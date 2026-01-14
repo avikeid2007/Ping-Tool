@@ -1,25 +1,79 @@
-
 <h1 align="center">
-<img src="https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/logo.png" alt="Ping legacy" width="200">
- <br/>
- <br/>
- <a href='https://www.microsoft.com/store/apps/9P1KVKT59T2M'><img src='https://raw.githubusercontent.com/avikeid2007/WinDev-Utility/dev/ScreenShots/store.png' alt='English badge' width="150" /></a>
-
+<img src="https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/logo.png" alt="Ping Legacy" width="200">
+<br/>
+Ping Legacy
+<br/>
+<a href='https://www.microsoft.com/store/apps/9P1KVKT59T2M'><img src='https://raw.githubusercontent.com/avikeid2007/WinDev-Utility/dev/ScreenShots/store.png' alt='Get it on Microsoft Store' width="150" /></a>
 </h1>
 
-<h4 align="center">  
-Ping Legacy gives a legacy experience to test ping to get connection status and quality to network or internet. It allows exporting the ping data to a text file for further analysis that one is a very useful feature for a lot of system admins. This is an all in one solution for a system admin to have all the required information at one location.
-</h4>
+<p align="center">
+<b>A modern network diagnostic tool for Windows</b><br/>
+Test your connection status and quality with ease.
+</p>
 
-![](https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/ping-legacy.png)
+---
 
-## License
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🌐 **Live Ping Testing** | Continuous ICMP ping to any host with real-time results |
+| 📊 **Statistics** | Min/Max/Avg latency, packet loss percentage |
+| 📈 **Real-time Graph** | Visual latency chart showing ping trends |
+| ⭐ **Favorites** | Quick access to frequently pinged hosts |
+| 🌙 **Dark/Light Theme** | System-aware theming support |
+| 📁 **Export** | Save ping results to text file with statistics |
+| 🔌 **Network Info** | IP address, profile, data usage, adapters list |
+| 📜 **History** | View past ping sessions |
+| 📉 **Data Usage** | Track network data consumption |
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `F5` | Start ping |
+| `Esc` | Stop ping |
+| `Ctrl+E` | Export results |
+| `Ctrl+D` | Clear results |
+| `Ctrl+F` | Add to favorites |
+
+## 🛠️ Tech Stack
+
+- **WinUI 3** - Modern Windows UI framework
+- **Windows App SDK 1.5** - Latest Windows development platform
+- **.NET 8** - Cross-platform runtime
+- **CommunityToolkit.Mvvm** - MVVM architecture
+- **SQLite** - Local data storage
+
+## 📸 Screenshot
+
+![Ping Legacy](https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/ping-legacy.png)
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Windows 10 version 1809 or later
+- Visual Studio 2022 with Windows App SDK workload
+
+### Build
+
+```bash
+git clone https://github.com/avikeid2007/Ping-Tool.git
+cd Ping-Tool
+dotnet build PingTool.WinUI3.sln -c Release -p:Platform=x64
+```
+
+### Run
+
+Open `PingTool.WinUI3.sln` in Visual Studio and press F5.
+
+## 📄 License
 
 MIT
 
 ---
 
-> [avnishkumar.co.in](http://avnishkumar.co.in) &nbsp;&middot;&nbsp;
-> GitHub [@avikeid2007](https://github.com/avikeid2007) &nbsp;&middot;&nbsp;
+> [avnishkumar.co.in](http://avnishkumar.co.in) &nbsp;·&nbsp;
+> GitHub [@avikeid2007](https://github.com/avikeid2007) &nbsp;·&nbsp;
 > Twitter [@avikeid2007](https://twitter.com/avikeid2007)
-
