@@ -82,3 +82,21 @@ public class StatusToOpacityConverter : IValueConverter
     public object ConvertBack(object value, Type targetType, object parameter, string language)
         => throw new NotImplementedException();
 }
+
+/// <summary>
+/// Converts double to formatted string with one decimal place
+/// </summary>
+public class DoubleToStringConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is double d)
+        {
+            return d.ToString("F1");
+        }
+        return "0";
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+        => throw new NotImplementedException();
+}

@@ -5,6 +5,7 @@
     xmlns:converters="using:PingTool.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     KeyDown="Page_KeyDown"
     mc:Ignorable="d">
 
@@ -44,11 +45,14 @@
                 <!--  Left: Title & Description  -->
                 <StackPanel Margin="0,0,32,0" VerticalAlignment="Center">
                     <StackPanel Orientation="Horizontal" Spacing="12">
-                        <Image
+                        <Border
                             Width="52"
                             Height="52"
-                            Source="ms-appx:///Assets/Logo.png"
-                            Stretch="UniformToFill" />
+                            Padding="2"
+                            Background="White"
+                            CornerRadius="12">
+                            <Image Source="ms-appx:///Assets/Logo.png" Stretch="UniformToFill" />
+                        </Border>
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock
                                 FontSize="26"
@@ -65,97 +69,112 @@
                 </StackPanel>
 
                 <!--  Right: Ping Controls (THE MAIN FEATURE)  -->
-                <Border
+                <StackPanel
                     Grid.Column="1"
-                    Padding="8"
                     HorizontalAlignment="Right"
-                    Background="White"
-                    CornerRadius="12">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <!--  Favorites Dropdown  -->
-                        <DropDownButton
-                            Padding="12,10"
-                            VerticalAlignment="Stretch"
-                            ToolTipService.ToolTip="Quick Hosts (Ctrl+F to add)">
-                            <StackPanel Orientation="Horizontal" Spacing="6">
-                                <FontIcon
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    FontSize="16"
-                                    Glyph="&#xE728;" />
-                                <TextBlock FontWeight="SemiBold" Text="Favorites" />
-                            </StackPanel>
-                            <DropDownButton.Flyout>
-                                <MenuFlyout>
-                                    <MenuFlyoutItem Click="FavoriteItem_Click" Text="8.8.8.8" />
-                                    <MenuFlyoutItem Click="FavoriteItem_Click" Text="1.1.1.1" />
-                                    <MenuFlyoutItem Click="FavoriteItem_Click" Text="google.com" />
-                                    <MenuFlyoutItem Click="FavoriteItem_Click" Text="cloudflare.com" />
-                                    <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem Click="AddFavorite_Click" Text="Add Current Host">
-                                        <MenuFlyoutItem.Icon>
-                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
-                                        </MenuFlyoutItem.Icon>
-                                    </MenuFlyoutItem>
-                                </MenuFlyout>
-                            </DropDownButton.Flyout>
-                        </DropDownButton>
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="8">
 
-                        <!--  Host Input  -->
-                        <TextBox
-                            x:Name="TxtAddress"
-                            Width="280"
-                            Padding="12,10"
-                            VerticalAlignment="Center"
-                            FontSize="15"
-                            KeyDown="TxtAddress_KeyDown"
-                            PlaceholderText="Enter IP address or hostname..."
-                            Text="{x:Bind ViewModel.HostNameOrAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                        <!--  START/STOP Button (Large & Prominent)  -->
-                        <Button
-                            MinWidth="120"
-                            Padding="24,12"
-                            Command="{x:Bind ViewModel.StartPingCommand}"
-                            CornerRadius="8"
-                            Style="{StaticResource AccentButtonStyle}"
-                            ToolTipService.ToolTip="Start: F5 | Stop: Esc">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <SymbolIcon Symbol="{x:Bind GetStartStopSymbol(ViewModel.IsPingStarted), Mode=OneWay}" />
-                                <TextBlock
-                                    FontSize="15"
-                                    FontWeight="Bold"
-                                    Text="{x:Bind GetStartStopText(ViewModel.IsPingStarted), Mode=OneWay}" />
-                            </StackPanel>
-                        </Button>
-
-                        <!--  Quick Actions  -->
-                        <StackPanel
-                            Margin="8,0,0,0"
-                            Orientation="Horizontal"
-                            Spacing="4">
-                            <Button
-                                Padding="10"
-                                Command="{x:Bind ViewModel.ClearPingCommand}"
-                                Style="{StaticResource IconButtonStyle}"
-                                ToolTipService.ToolTip="Clear (Ctrl+D)">
-                                <FontIcon
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    FontSize="16"
-                                    Glyph="&#xE74D;" />
-                            </Button>
-                            <Button
-                                Padding="10"
-                                Command="{x:Bind ViewModel.ExportCommand}"
-                                Style="{StaticResource IconButtonStyle}"
-                                ToolTipService.ToolTip="Export (Ctrl+E)">
-                                <FontIcon
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    FontSize="16"
-                                    Glyph="&#xE78C;" />
-                            </Button>
+                    <!--  Favorites Dropdown  -->
+                    <DropDownButton
+                        Padding="14,10"
+                        Background="#44FFFFFF"
+                        BorderBrush="#22FFFFFF"
+                        CornerRadius="8"
+                        Foreground="White"
+                        ToolTipService.ToolTip="Quick Hosts (Ctrl+F to add)">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="14"
+                                Foreground="White"
+                                Glyph="&#xE728;" />
+                            <TextBlock
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                Text="Favorites" />
                         </StackPanel>
+                        <DropDownButton.Flyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Click="FavoriteItem_Click" Text="8.8.8.8" />
+                                <MenuFlyoutItem Click="FavoriteItem_Click" Text="1.1.1.1" />
+                                <MenuFlyoutItem Click="FavoriteItem_Click" Text="google.com" />
+                                <MenuFlyoutItem Click="FavoriteItem_Click" Text="cloudflare.com" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem Click="AddFavorite_Click" Text="Add Current Host">
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+                            </MenuFlyout>
+                        </DropDownButton.Flyout>
+                    </DropDownButton>
+
+                    <!--  Host Input  -->
+                    <TextBox
+                        x:Name="TxtAddress"
+                        Width="280"
+                        Padding="14,10"
+                        VerticalAlignment="Center"
+                        Background="#EEFFFFFF"
+                        BorderBrush="#22FFFFFF"
+                        CornerRadius="8"
+                        FontSize="14"
+                        KeyDown="TxtAddress_KeyDown"
+                        PlaceholderText="Enter IP or hostname..."
+                        Text="{x:Bind ViewModel.HostNameOrAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <!--  START/STOP Button (Large & Prominent)  -->
+                    <Button
+                        MinWidth="110"
+                        Padding="20,12"
+                        Command="{x:Bind ViewModel.StartPingCommand}"
+                        CornerRadius="8"
+                        Style="{StaticResource AccentButtonStyle}"
+                        ToolTipService.ToolTip="Start: F5 | Stop: Esc">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <SymbolIcon Symbol="{x:Bind GetStartStopSymbol(ViewModel.IsPingStarted), Mode=OneWay}" />
+                            <TextBlock
+                                FontSize="14"
+                                FontWeight="Bold"
+                                Text="{x:Bind GetStartStopText(ViewModel.IsPingStarted), Mode=OneWay}" />
+                        </StackPanel>
+                    </Button>
+
+                    <!--  Quick Actions  -->
+                    <StackPanel
+                        Margin="4,0,0,0"
+                        Orientation="Horizontal"
+                        Spacing="4">
+                        <Button
+                            Padding="10"
+                            Background="#22FFFFFF"
+                            BorderBrush="Transparent"
+                            Command="{x:Bind ViewModel.ClearPingCommand}"
+                            CornerRadius="6"
+                            ToolTipService.ToolTip="Clear Results (Ctrl+Delete)">
+                            <FontIcon
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="14"
+                                Foreground="White"
+                                Glyph="&#xE74D;" />
+                        </Button>
+                        <Button
+                            Padding="10"
+                            Background="#22FFFFFF"
+                            BorderBrush="Transparent"
+                            Click="Settings_Click"
+                            CornerRadius="6"
+                            ToolTipService.ToolTip="Settings">
+                            <FontIcon
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                FontSize="14"
+                                Foreground="White"
+                                Glyph="&#xE713;" />
+                        </Button>
                     </StackPanel>
-                </Border>
+                </StackPanel>
             </Grid>
         </Border>
 
@@ -711,16 +730,9 @@
             </Border>
 
             <!--  ===== DNS LOOKUP =====  -->
-            <Border
-                Grid.Row="2"
-                Margin="8,0,0,16"
-                Padding="16"
-                Style="{StaticResource ModernCardStyle}">
+            <Border Grid.Row="2" Style="{StaticResource ModernCardStyle}">
                 <StackPanel>
-                    <StackPanel
-                        Margin="0,0,0,12"
-                        Orientation="Horizontal"
-                        Spacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
                         <Border
                             Width="24"
                             Height="24"

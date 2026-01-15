@@ -1,157 +1,424 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="PingTool.Views.DataUsagePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Padding="24,16">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <ScrollViewer Padding="24,16">
+        <StackPanel Spacing="20" MaxWidth="1200">
+            <!-- Header -->
+            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,8">
+                <Border
+                    Width="44"
+                    Height="44"
+                    CornerRadius="10"
+                    Background="{StaticResource AccentGradientBrush}">
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        Glyph="&#xE9D9;"
+                        FontSize="20"
+                        Foreground="White"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center" />
+                </Border>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock
+                        Text="Network Statistics"
+                        FontSize="24"
+                        FontWeight="Bold" />
+                    <TextBlock
+                        Text="Monitor your network usage and connection details"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+                <Button
+                    Margin="24,0,0,0"
+                    VerticalAlignment="Center"
+                    Click="Refresh_Click"
+                    ToolTipService.ToolTip="Refresh data">
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            Glyph="&#xE72C;"
+                            FontSize="14" />
+                        <TextBlock Text="Refresh" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
 
-        <!-- Header -->
-        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,24">
-            <Border 
-                Width="44" Height="44" 
-                CornerRadius="10"
-                Background="{StaticResource AccentGradientBrush}">
-                <FontIcon 
-                    FontFamily="{StaticResource SymbolThemeFontFamily}" 
-                    Glyph="&#xE9D9;" 
-                    FontSize="20"
-                    Foreground="White"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"/>
+            <!-- Connection Info Card -->
+            <Border Style="{StaticResource ModernCardStyle}">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            Glyph="&#xE839;"
+                            FontSize="16"
+                            Foreground="{StaticResource PrimaryAccentBrush}" />
+                        <TextBlock
+                            Text="Active Connection"
+                            FontWeight="SemiBold"
+                            FontSize="16" />
+                    </StackPanel>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel>
+                            <TextBlock
+                                Text="Network Name"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock
+                                x:Name="NetworkName"
+                                Text="--"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1">
+                            <TextBlock
+                                Text="Connection Type"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock
+                                x:Name="ConnectionType"
+                                Text="--"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Margin="0,4,0,0" />
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock
+                                Text="Signal Strength"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <StackPanel Orientation="Horizontal" Spacing="6" Margin="0,4,0,0">
+                                <FontIcon
+                                    x:Name="SignalIcon"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE871;"
+                                    FontSize="16"
+                                    Foreground="#10B981" />
+                                <TextBlock
+                                    x:Name="SignalStrength"
+                                    Text="--"
+                                    FontSize="16"
+                                    FontWeight="SemiBold" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="3">
+                            <TextBlock
+                                Text="Cost Type"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            <TextBlock
+                                x:Name="CostType"
+                                Text="--"
+                                FontSize="16"
+                                FontWeight="SemiBold"
+                                Margin="0,4,0,0" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
             </Border>
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Data Usage" FontSize="24" FontWeight="Bold"/>
-                <TextBlock 
-                    Text="Monitor your network consumption" 
-                    FontSize="12" 
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-            </StackPanel>
+
+            <!-- Today's Usage -->
+            <TextBlock
+                Text="Today's Usage"
+                FontWeight="SemiBold"
+                FontSize="18"
+                Margin="0,8,0,0" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Download -->
+                <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="8"
+                                Background="{StaticResource SuccessGradientBrush}">
+                                <FontIcon
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE896;"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock
+                                Text="Downloaded"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="TodayDownload"
+                            Text="0 MB"
+                            FontSize="32"
+                            FontWeight="Bold"
+                            Margin="0,12,0,0" />
+                        <TextBlock
+                            Text="Data received today"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Upload -->
+                <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8,0,8,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="8"
+                                Background="{StaticResource InfoGradientBrush}">
+                                <FontIcon
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE898;"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock
+                                Text="Uploaded"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="TodayUpload"
+                            Text="0 MB"
+                            FontSize="32"
+                            FontWeight="Bold"
+                            Margin="0,12,0,0" />
+                        <TextBlock
+                            Text="Data sent today"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Total -->
+                <Border Grid.Column="2" Style="{StaticResource ModernCardStyle}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="8"
+                                Background="{StaticResource AccentGradientBrush}">
+                                <FontIcon
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE9D9;"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock
+                                Text="Total"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="TodayTotal"
+                            Text="0 MB"
+                            FontSize="32"
+                            FontWeight="Bold"
+                            Margin="0,12,0,0" />
+                        <TextBlock
+                            Text="Total data today"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Last 30 Days Usage -->
+            <TextBlock
+                Text="Last 30 Days"
+                FontWeight="SemiBold"
+                FontSize="18"
+                Margin="0,8,0,0" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Download -->
+                <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="8"
+                                Background="#22059669">
+                                <FontIcon
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE896;"
+                                    FontSize="16"
+                                    Foreground="#059669"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock
+                                Text="Downloaded"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="MonthDownload"
+                            Text="0 GB"
+                            FontSize="28"
+                            FontWeight="Bold"
+                            Margin="0,12,0,0" />
+                        <TextBlock
+                            Text="Past 30 days"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Upload -->
+                <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8,0,8,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="8"
+                                Background="#220EA5E9">
+                                <FontIcon
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE898;"
+                                    FontSize="16"
+                                    Foreground="#0EA5E9"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock
+                                Text="Uploaded"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="MonthUpload"
+                            Text="0 GB"
+                            FontSize="28"
+                            FontWeight="Bold"
+                            Margin="0,12,0,0" />
+                        <TextBlock
+                            Text="Past 30 days"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Total -->
+                <Border Grid.Column="2" Style="{StaticResource ModernCardStyle}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Border
+                                Width="36"
+                                Height="36"
+                                CornerRadius="8"
+                                Background="#227C3AED">
+                                <FontIcon
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Glyph="&#xE9D9;"
+                                    FontSize="16"
+                                    Foreground="#7C3AED"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <TextBlock
+                                Text="Total"
+                                VerticalAlignment="Center"
+                                FontWeight="SemiBold" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="MonthTotal"
+                            Text="0 GB"
+                            FontSize="28"
+                            FontWeight="Bold"
+                            Margin="0,12,0,0" />
+                        <TextBlock
+                            Text="Past 30 days"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorTertiaryBrush}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- Daily Average -->
+            <Border Style="{StaticResource ModernCardStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock
+                            Text="Daily Average"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock
+                            x:Name="DailyAverage"
+                            Text="-- MB/day"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock
+                            Text="Peak Usage Day"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock
+                            x:Name="PeakDay"
+                            Text="--"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="2">
+                        <TextBlock
+                            Text="Last Updated"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <TextBlock
+                            x:Name="LastUpdated"
+                            Text="--"
+                            FontSize="20"
+                            FontWeight="Bold"
+                            Margin="0,4,0,0" />
+                    </StackPanel>
+                </Grid>
+            </Border>
         </StackPanel>
-
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Spacing="16">
-                <!-- Today's Usage Cards -->
-                <TextBlock Text="Today" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Download Card -->
-                    <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,8,0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Border 
-                                    Width="40" Height="40" 
-                                    CornerRadius="10"
-                                    Background="{StaticResource SuccessGradientBrush}">
-                                    <SymbolIcon Symbol="Download" Foreground="White"/>
-                                </Border>
-                                <TextBlock Text="Downloaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
-                                <TextBlock x:Name="TodayDownload" Text="0" Style="{StaticResource StatsValueStyle}"/>
-                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                            <TextBlock Grid.Row="2" Text="Today's download" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
-                        </Grid>
-                    </Border>
-
-                    <!-- Upload Card -->
-                    <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8,0,0,0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Border 
-                                    Width="40" Height="40" 
-                                    CornerRadius="10"
-                                    Background="{StaticResource InfoGradientBrush}">
-                                    <SymbolIcon Symbol="Upload" Foreground="White"/>
-                                </Border>
-                                <TextBlock Text="Uploaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
-                                <TextBlock x:Name="TodayUpload" Text="0" Style="{StaticResource StatsValueStyle}"/>
-                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                            <TextBlock Grid.Row="2" Text="Today's upload" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
-                        </Grid>
-                    </Border>
-                </Grid>
-
-                <!-- Last 10 Days Usage Cards -->
-                <TextBlock Text="Last 10 Days" FontWeight="SemiBold" FontSize="16" Margin="0,16,0,8"/>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Total Download Card -->
-                    <Border Style="{StaticResource ModernCardStyle}" Margin="0,0,8,0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Border 
-                                    Width="40" Height="40" 
-                                    CornerRadius="10"
-                                    Background="{StaticResource AccentGradientBrush}">
-                                    <SymbolIcon Symbol="Download" Foreground="White"/>
-                                </Border>
-                                <TextBlock Text="Total Downloaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
-                                <TextBlock x:Name="TotalDownload" Text="0" Style="{StaticResource StatsValueStyle}"/>
-                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                            <TextBlock Grid.Row="2" Text="Past 10 days" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
-                        </Grid>
-                    </Border>
-
-                    <!-- Total Upload Card -->
-                    <Border Grid.Column="1" Style="{StaticResource ModernCardStyle}" Margin="8,0,0,0">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <Border 
-                                    Width="40" Height="40" 
-                                    CornerRadius="10"
-                                    Background="{StaticResource WarningGradientBrush}">
-                                    <SymbolIcon Symbol="Upload" Foreground="White"/>
-                                </Border>
-                                <TextBlock Text="Total Uploaded" Style="{StaticResource StatsLabelStyle}" VerticalAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,16,0,0">
-                                <TextBlock x:Name="TotalUpload" Text="0" Style="{StaticResource StatsValueStyle}"/>
-                                <TextBlock Text=" MB" FontSize="16" VerticalAlignment="Bottom" Margin="0,0,0,6" Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                            </StackPanel>
-                            <TextBlock Grid.Row="2" Text="Past 10 days" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}"/>
-                        </Grid>
-                    </Border>
-                </Grid>
-            </StackPanel>
-        </ScrollViewer>
-    </Grid>
+    </ScrollViewer>
 </Page>

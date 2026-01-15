@@ -72,6 +72,11 @@ public sealed partial class MainPage : Page
         ViewModel.AddToFavoritesCommand.Execute(null);
     }
 
+    private void Settings_Click(object sender, RoutedEventArgs e)
+    {
+        NavigationService.Navigate<SettingsPage>();
+    }
+
     private void ChartCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         DrawChart();
