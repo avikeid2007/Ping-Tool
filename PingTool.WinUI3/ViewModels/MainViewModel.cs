@@ -16,6 +16,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly PingService _pingService = new();
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+    private System.Threading.Timer? _dataRefreshTimer;
 
     private CancellationTokenSource? _pingCts;
     private Guid _pingId;
@@ -33,6 +34,12 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private string _ipAddress = string.Empty;
+
+    [ObservableProperty]
+    private string _ipv6Address = string.Empty;
+
+    [ObservableProperty]
+    private string _publicIp = string.Empty;
 
     [ObservableProperty]
     private string _profileName = string.Empty;
@@ -135,12 +142,59 @@ public partial class MainViewModel : ObservableObject
         var isPingAutoStart = SettingsHelper.Read<bool?>("IsPingAutoStart") ?? true;
 
         await SetNetworkInfoAsync();
-        NetworkInformation.NetworkStatusChanged += async _ => await SetNetworkInfoAsync();
+        _ = FetchPublicIpAsync(); // Fire and forget - don't wait for this
+        NetworkInformation.NetworkStatusChanged += async _ =>
+        {
+            await SetNetworkInfoAsync();
+            _ = FetchPublicIpAsync();
+        };
+
+        // Start data usage auto-refresh timer (every 2 seconds)
+        _dataRefreshTimer = new System.Threading.Timer(
+            async _ => await RefreshDataUsageAsync(),
+            null,
+            TimeSpan.FromSeconds(2),
+            TimeSpan.FromSeconds(2));
 
         if (isPingAutoStart)
         {
             await Task.Delay(2000);
             await StartPingAsync();
+        }
+    }
+
+    private async Task FetchPublicIpAsync()
+    {
+        try
+        {
+            using var httpClient = new System.Net.Http.HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
+            var publicIp = await httpClient.GetStringAsync("https://api.ipify.org");
+            _dispatcherQueue.TryEnqueue(() => PublicIp = publicIp.Trim());
+        }
+        catch
+        {
+            _dispatcherQueue.TryEnqueue(() => PublicIp = "N/A");
+        }
+    }
+
+    private async Task RefreshDataUsageAsync()
+    {
+        try
+        {
+            if (SelectedLocalLAN != null)
+            {
+                var ipStats = SelectedLocalLAN.GetIPStatistics();
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    TotalReceivedBytes = ipStats.BytesReceived / 1048576;
+                    TotalSentBytes = ipStats.BytesSent / 1048576;
+                });
+            }
+        }
+        catch
+        {
+            // Ignore refresh errors
         }
     }
 
@@ -215,6 +269,15 @@ public partial class MainViewModel : ObservableObject
     private void CopyIpAddress()
     {
         FileHelper.CopyText(IpAddress);
+    }
+
+    [RelayCommand]
+    private void CopyPublicIp()
+    {
+        if (!string.IsNullOrEmpty(PublicIp) && PublicIp != "N/A")
+        {
+            FileHelper.CopyText(PublicIp);
+        }
     }
 
     [RelayCommand]
@@ -416,9 +479,17 @@ public partial class MainViewModel : ObservableObject
             }
 
             var hasInternet = icp.GetNetworkConnectivityLevel() >= NetworkConnectivityLevel.InternetAccess;
-            var hostname = NetworkInformation.GetHostNames()
-                .FirstOrDefault(hn => hn.IPInformation?.NetworkAdapter != null
-                    && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
+
+            // Get all hostnames for this network adapter
+            var hostnames = NetworkInformation.GetHostNames()
+                .Where(hn => hn.IPInformation?.NetworkAdapter != null
+                    && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId)
+                .ToList();
+
+            // Find IPv4 and IPv6 addresses
+            var ipv4Host = hostnames.FirstOrDefault(hn => hn.Type == Windows.Networking.HostNameType.Ipv4);
+            var ipv6Host = hostnames.FirstOrDefault(hn => hn.Type == Windows.Networking.HostNameType.Ipv6);
+            var hostname = ipv4Host ?? ipv6Host ?? hostnames.FirstOrDefault();
 
             if (hostname != null)
             {
@@ -428,7 +499,8 @@ public partial class MainViewModel : ObservableObject
                 {
                     HasInternetAccess = hasInternet;
                     SelectedLocalLAN = LocalLANCollection.FirstOrDefault(x => x.Id.ToUpper() == currentNetworkId);
-                    IpAddress = hostname.CanonicalName;
+                    IpAddress = ipv4Host?.CanonicalName ?? hostname.CanonicalName;
+                    Ipv6Address = ipv6Host?.CanonicalName ?? string.Empty;
                     IpType = hostname.Type.ToString();
                     ProfileName = icp.ProfileName;
                     IsWlan = icp.IsWlanConnectionProfile;
