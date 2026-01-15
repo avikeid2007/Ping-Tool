@@ -1,5 +1,5 @@
 <h1 align="center">
-<img src="https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/logo.png" alt="Ping Legacy" width="200">
+<img src="icon.png" alt="Ping Legacy" width="150">
 <br/>
 Ping Legacy
 <br/>
@@ -23,9 +23,16 @@ Test your connection status and quality with ease.
 | ⭐ **Favorites** | Quick access to frequently pinged hosts |
 | 🌙 **Dark/Light Theme** | System-aware theming support |
 | 📁 **Export** | Save ping results to text file with statistics |
-| 🔌 **Network Info** | IP address, profile, data usage, adapters list |
+| 🔌 **Network Info** | IPv4, IPv6, Public IP, profile, adapters |
+| 🌍 **Public IP** | Auto-fetch external IP with copy support |
+| 🔍 **DNS Lookup** | Resolve hostnames and display IP records |
+| 🔔 **Drop Notifications** | Windows toast alerts on connection loss |
+| 🛤️ **Traceroute** | Trace hop-by-hop path to any destination |
+| 🔐 **Port Scanner** | Check open ports with legal authorization |
+| ⏰ **Scheduled Pings** | Monitor hosts at regular intervals |
+| 🚀 **Speed Test** | Test download, upload speeds and latency |
 | 📜 **History** | View past ping sessions |
-| 📉 **Data Usage** | Track network data consumption |
+| 📉 **Data Usage** | Track network data consumption (auto-refresh) |
 
 ## ⌨️ Keyboard Shortcuts
 

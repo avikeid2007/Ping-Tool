@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page
+    x:Class="PingTool.Views.SpeedTestPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Margin="0,0,0,20" Orientation="Horizontal" Spacing="12">
+            <Border
+                Width="40"
+                Height="40"
+                Background="{StaticResource AccentGradientBrush}"
+                CornerRadius="8">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="18"
+                    Foreground="White"
+                    Glyph="&#xE8B0;" />
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Text="Speed Test" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Test your internet download and upload speeds" />
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <Border
+            Grid.Row="1"
+            Padding="32"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            CornerRadius="8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Speed Display -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Download -->
+                    <StackPanel HorizontalAlignment="Center" Spacing="8">
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="32"
+                            Foreground="{StaticResource PrimaryAccentBrush}"
+                            Glyph="&#xE896;" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="11"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="DOWNLOAD" />
+                        <TextBlock
+                            x:Name="DownloadSpeed"
+                            HorizontalAlignment="Center"
+                            FontFamily="Cascadia Mono, Consolas"
+                            FontSize="36"
+                            FontWeight="Bold"
+                            Text="--" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Mbps" />
+                    </StackPanel>
+
+                    <!-- Separator -->
+                    <Border
+                        Grid.Column="1"
+                        Width="1"
+                        Margin="48,0"
+                        Background="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                    <!-- Upload -->
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="8">
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="32"
+                            Foreground="{StaticResource SuccessGradientBrush}"
+                            Glyph="&#xE898;" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="11"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="UPLOAD" />
+                        <TextBlock
+                            x:Name="UploadSpeed"
+                            HorizontalAlignment="Center"
+                            FontFamily="Cascadia Mono, Consolas"
+                            FontSize="36"
+                            FontWeight="Bold"
+                            Text="--" />
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Mbps" />
+                    </StackPanel>
+                </Grid>
+
+                <!-- Latency & Progress -->
+                <StackPanel Grid.Row="1" Margin="0,24,0,0" Spacing="16">
+                    <!-- Latency -->
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Spacing="8">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="12"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Latency:" />
+                        <TextBlock
+                            x:Name="Latency"
+                            VerticalAlignment="Center"
+                            FontFamily="Cascadia Mono, Consolas"
+                            FontSize="14"
+                            FontWeight="SemiBold"
+                            Text="-- ms" />
+                    </StackPanel>
+
+                    <!-- Progress -->
+                    <ProgressBar
+                        x:Name="ProgressBar"
+                        Maximum="100"
+                        Visibility="Collapsed" />
+
+                    <!-- Status -->
+                    <TextBlock
+                        x:Name="StatusText"
+                        HorizontalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Click Start to begin the speed test" />
+                </StackPanel>
+
+                <!-- Start Button -->
+                <Button
+                    x:Name="StartButton"
+                    Grid.Row="2"
+                    Margin="0,24,0,0"
+                    Padding="32,12"
+                    HorizontalAlignment="Center"
+                    Click="StartButton_Click"
+                    Style="{StaticResource AccentButtonStyle}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon
+                            x:Name="StartButtonIcon"
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                            FontSize="16"
+                            Glyph="&#xE768;" />
+                        <TextBlock x:Name="StartButtonText" FontSize="14" Text="Start Test" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

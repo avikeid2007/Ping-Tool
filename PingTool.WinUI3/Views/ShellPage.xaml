@@ -22,6 +22,26 @@
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE968;"/>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                <NavigationViewItem Content="Traceroute" helpers:NavHelper.NavigateTo="views:TraceroutePage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8F1;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Port Scanner" helpers:NavHelper.NavigateTo="views:PortScannerPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Speed Test" helpers:NavHelper.NavigateTo="views:SpeedTestPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B0;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem Content="Scheduled" helpers:NavHelper.NavigateTo="views:ScheduledPingsPage">
+                    <NavigationViewItem.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE823;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
                 <NavigationViewItem Content="Data Usage" helpers:NavHelper.NavigateTo="views:DataUsagePage">
                     <NavigationViewItem.Icon>
                         <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE9D9;"/>
@@ -48,18 +68,10 @@
             <NavigationView.PaneHeader>
                 <Border Padding="12,8" Margin="0,0,0,4">
                     <StackPanel Orientation="Horizontal" Spacing="12">
-                        <Border 
+                        <Image 
                             Width="36" Height="36" 
-                            CornerRadius="8"
-                            Background="{StaticResource AccentGradientBrush}">
-                            <FontIcon 
-                                FontFamily="{StaticResource SymbolThemeFontFamily}" 
-                                Glyph="&#xE968;" 
-                                FontSize="16"
-                                Foreground="White"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"/>
-                        </Border>
+                            Source="ms-appx:///Assets/Logo.png" 
+                            Stretch="UniformToFill"/>
                         <TextBlock 
                             Text="Ping Legacy" 
                             FontWeight="Bold" 

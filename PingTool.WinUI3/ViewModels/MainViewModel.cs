@@ -29,6 +29,9 @@ public partial class MainViewModel : ObservableObject
     private readonly List<long> _successfulPingTimes = new();
     private int _totalPings;
     private int _failedPings;
+    private int _consecutiveFailures;
+    private const int FailureThreshold = 3;
+    private bool _notificationShown;
 
     #region Network Properties
 
@@ -123,6 +126,21 @@ public partial class MainViewModel : ObservableObject
     private ObservableCollection<double> _chartValues = new();
 
     private const int MaxChartPoints = 50;
+
+    #endregion
+
+    #region DNS Lookup Properties
+
+    private readonly DnsLookupService _dnsLookupService = new();
+
+    [ObservableProperty]
+    private string _dnsLookupHost = string.Empty;
+
+    [ObservableProperty]
+    private DnsLookupResult? _dnsResult;
+
+    [ObservableProperty]
+    private bool _isDnsLookupRunning;
 
     #endregion
 
@@ -250,11 +268,44 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            // Stop ping
+            // Stop ping and save to history
             _pingCts?.Cancel();
             _pingService.Stop();
+
+            // Save ping session to history
+            SavePingToHistory();
+
             IsPingStarted = false;
         }
+    }
+
+    private void SavePingToHistory()
+    {
+        if (_totalPings == 0) return;
+
+        var host = HostNameOrAddress?.Replace("http://", "").Replace("https://", "").TrimEnd('/') ?? "";
+        var firstPing = PingCollection.FirstOrDefault();
+        var domainName = host != firstPing?.IpAddress ? host : null;
+
+        var historyItem = new HistoryItem
+        {
+            Type = HistoryType.Ping,
+            Target = firstPing?.IpAddress ?? host,
+            DomainName = domainName,
+            IsSuccess = SuccessCount > 0,
+            PingCount = _totalPings,
+            AvgLatency = (long)AvgPing,
+            PacketLoss = PacketLoss,
+            Summary = $"{_totalPings} pings, Avg: {AvgPing:F0}ms, Loss: {PacketLoss:F1}%",
+            Details = $"Target: {host}\n" +
+                     $"IP: {firstPing?.IpAddress}\n" +
+                     $"Total Pings: {_totalPings}\n" +
+                     $"Success: {SuccessCount}, Failed: {FailCount}\n" +
+                     $"Min: {MinPing}ms, Max: {MaxPing}ms, Avg: {AvgPing:F1}ms\n" +
+                     $"Packet Loss: {PacketLoss:F1}%"
+        };
+
+        HistoryService.Instance.AddHistory(historyItem);
     }
 
     [RelayCommand]
@@ -279,6 +330,49 @@ public partial class MainViewModel : ObservableObject
             FileHelper.CopyText(PublicIp);
         }
     }
+
+    #endregion
+
+    #region DNS Lookup Commands
+
+    [RelayCommand]
+    private async Task DnsLookupAsync()
+    {
+        if (string.IsNullOrWhiteSpace(DnsLookupHost))
+        {
+            // Use current ping host if DNS host is empty
+            DnsLookupHost = HostNameOrAddress;
+        }
+
+        if (string.IsNullOrWhiteSpace(DnsLookupHost)) return;
+
+        IsDnsLookupRunning = true;
+        try
+        {
+            DnsResult = await _dnsLookupService.LookupAsync(DnsLookupHost.Trim());
+        }
+        finally
+        {
+            IsDnsLookupRunning = false;
+        }
+    }
+
+    [RelayCommand]
+    private void CopyDnsResult()
+    {
+        if (DnsResult?.IsSuccess == true)
+        {
+            var text = $"Hostname: {DnsResult.Hostname}\n" +
+                      $"Canonical: {DnsResult.CanonicalName}\n" +
+                      $"IPv4: {string.Join(", ", DnsResult.IPv4Addresses)}\n" +
+                      $"IPv6: {string.Join(", ", DnsResult.IPv6Addresses)}";
+            FileHelper.CopyText(text);
+        }
+    }
+
+    #endregion
+
+    #region Export Commands
 
     [RelayCommand]
     private async Task ExportAsync()
@@ -430,6 +524,10 @@ public partial class MainViewModel : ObservableObject
             _successfulPingTimes.Add(result.Time);
             SuccessCount++;
 
+            // Reset consecutive failures on success
+            _consecutiveFailures = 0;
+            _notificationShown = false;
+
             MinPing = _successfulPingTimes.Min();
             MaxPing = _successfulPingTimes.Max();
             AvgPing = _successfulPingTimes.Average();
@@ -445,6 +543,14 @@ public partial class MainViewModel : ObservableObject
         {
             _failedPings++;
             FailCount++;
+            _consecutiveFailures++;
+
+            // Show notification on connection drop (3+ consecutive failures)
+            if (_consecutiveFailures >= FailureThreshold && !_notificationShown)
+            {
+                ShowConnectionDropNotification();
+                _notificationShown = true;
+            }
 
             // Add a spike value for failed pings in chart
             ChartValues.Add(-1);
@@ -455,6 +561,31 @@ public partial class MainViewModel : ObservableObject
         }
 
         PacketLoss = _totalPings > 0 ? (double)_failedPings / _totalPings * 100 : 0;
+    }
+
+    private void ShowConnectionDropNotification()
+    {
+        try
+        {
+            var toastXml = new Windows.Data.Xml.Dom.XmlDocument();
+            toastXml.LoadXml($@"
+                <toast>
+                    <visual>
+                        <binding template='ToastGeneric'>
+                            <text>Connection Lost</text>
+                            <text>Unable to reach {HostNameOrAddress} - {_consecutiveFailures} consecutive failures</text>
+                        </binding>
+                    </visual>
+                    <audio src='ms-winsoundevent:Notification.Default' />
+                </toast>");
+
+            var toast = new Windows.UI.Notifications.ToastNotification(toastXml);
+            Windows.UI.Notifications.ToastNotificationManager.CreateToastNotifier("Ping Legacy").Show(toast);
+        }
+        catch
+        {
+            // Ignore notification errors
+        }
     }
 
     #endregion

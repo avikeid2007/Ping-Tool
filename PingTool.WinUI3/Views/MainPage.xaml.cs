@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using PingTool.Services;
 using PingTool.ViewModels;
 using Windows.System;
 using Windows.UI;
@@ -269,4 +270,29 @@ public sealed partial class MainPage : Page
             < 5 => AccentGradient,
             _ => WarningGradient
         };
+
+    #region DNS Lookup Helpers
+
+    public Visibility GetVisibility(bool isVisible) =>
+        isVisible ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility GetDnsResultVisibility(DnsLookupResult? result) =>
+        result?.IsSuccess == true ? Visibility.Visible : Visibility.Collapsed;
+
+    public Visibility GetDnsErrorVisibility(DnsLookupResult? result) =>
+        result != null && !result.IsSuccess ? Visibility.Visible : Visibility.Collapsed;
+
+    public string GetDnsIpv4(DnsLookupResult? result) =>
+        result?.IPv4Addresses?.Count > 0 ? string.Join(", ", result.IPv4Addresses) : "None";
+
+    public string GetDnsIpv6(DnsLookupResult? result) =>
+        result?.IPv6Addresses?.Count > 0 ? string.Join(", ", result.IPv6Addresses) : "None";
+
+    public string GetDnsCanonical(DnsLookupResult? result) =>
+        result?.CanonicalName ?? "";
+
+    public string GetDnsError(DnsLookupResult? result) =>
+        result?.Error ?? "";
+
+    #endregion
 }
