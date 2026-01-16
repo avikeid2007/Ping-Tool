@@ -1,0 +1,237 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [ main, avnish/migrateWinUI ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_PATH: 'PingTool.WinUI3/PingTool.WinUI3.csproj'
+  SOLUTION_PATH: 'PingTool.WinUI3.sln'
+
+jobs:
+  build-msix-bundle:
+    name: Build MSIX Bundle
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore NuGet packages
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+    - name: Build MSIX Bundle
+      run: |
+        powershell -ExecutionPolicy Bypass -File .\BuildMsixBundle.ps1
+
+    - name: Upload MSIX Bundle
+      uses: actions/upload-artifact@v4
+      with:
+        name: msix-bundle
+        path: PingTool.WinUI3/bin/Package/*.msixbundle
+        retention-days: 30
+
+    - name: Upload MSIX Symbols
+      uses: actions/upload-artifact@v4
+      with:
+        name: msix-symbols
+        path: PingTool.WinUI3/bin/Package/**/*.msixsym
+        retention-days: 30
+
+  build-installer:
+    name: Build Traditional Installer
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Restore NuGet packages
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+    - name: Build x64 Release
+      run: |
+        msbuild ${{ env.PROJECT_PATH }} `
+          /p:Configuration=Release `
+          /p:Platform=x64 `
+          /p:WindowsPackageType=None `
+          /p:AppxPackageSigningEnabled=false `
+          /p:GenerateAppxPackageOnBuild=false `
+          /t:Restore,Build
+
+    - name: Publish x64
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          -c Release `
+          -r win-x64 `
+          --self-contained true `
+          /p:Platform=x64 `
+          /p:WindowsPackageType=None `
+          /p:PublishSingleFile=false `
+          /p:PublishReadyToRun=true `
+          /p:PublishTrimmed=false `
+          -o Output/Publish/win-x64
+
+    - name: Setup Inno Setup
+      run: |
+        choco install innosetup -y
+        
+    - name: Create Installer
+      run: |
+        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" InnoSetup.iss
+
+    - name: Upload Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: installer
+        path: Output/Installer/*.exe
+        retention-days: 30
+
+  create-release:
+    name: Create GitHub Release
+    needs: [build-msix-bundle, build-installer]
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    permissions:
+      contents: write
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Download MSIX Bundle
+      uses: actions/download-artifact@v4
+      with:
+        name: msix-bundle
+        path: release/msix
+
+    - name: Download Installer
+      uses: actions/download-artifact@v4
+      with:
+        name: installer
+        path: release/installer
+
+    - name: Get version from tag
+      id: get_version
+      run: |
+        $version = "${{ github.ref_name }}".TrimStart('v')
+        echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+        echo "Version: $version"
+
+    - name: Create Release Notes
+      id: release_notes
+      run: |
+        $notes = @"
+        ## Ping Legacy ${{ steps.get_version.outputs.VERSION }}
+        
+        ### Download Options
+        
+        **Microsoft Store (Recommended)**
+        - Automatic updates
+        - Sandboxed installation
+        - [Get it from Microsoft Store](https://www.microsoft.com/store/apps/9NBLGGH4VQ4Q)
+        
+        **Direct Download**
+        - Traditional installer
+        - Offline installation
+        - Download the .exe file below
+        
+        ### Installation Methods
+        
+        #### Method 1: Microsoft Store (Recommended)
+        Get the app from the Microsoft Store for automatic updates and easy management.
+        
+        #### Method 2: MSIX Bundle
+        - For IT administrators or sideloading
+        - Requires certificate installation
+        - Download the .msixbundle file
+        
+        #### Method 3: Traditional Installer
+        - Standard Windows installer
+        - Download the .exe file
+        - Requires .NET 8 Desktop Runtime
+        
+        ### System Requirements
+        - Windows 10 version 1809 (Build 17763) or later
+        - Windows 11 (all versions)
+        - .NET 8 Desktop Runtime (will be prompted to install if missing)
+        
+        ### What's New
+        - See CHANGELOG.md for details
+        
+        ### Known Issues
+        - See GitHub Issues for current known issues
+        "@
+        
+        $notes | Out-File -FilePath release_notes.md -Encoding utf8
+        echo "NOTES_FILE=release_notes.md" >> $env:GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Ping Legacy ${{ steps.get_version.outputs.VERSION }}
+        body_path: ${{ steps.release_notes.outputs.NOTES_FILE }}
+        draft: false
+        prerelease: false
+        files: |
+          release/msix/*.msixbundle
+          release/installer/*.exe
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-installer:
+    name: Test Installer
+    needs: [build-installer]
+    runs-on: windows-latest
+    
+    steps:
+    - name: Download Installer
+      uses: actions/download-artifact@v4
+      with:
+        name: installer
+        path: installer
+
+    - name: List installer files
+      run: |
+        Get-ChildItem -Path installer -Recurse
+
+    - name: Verify installer exists
+      run: |
+        $installer = Get-ChildItem -Path installer -Filter "*.exe" | Select-Object -First 1
+        if ($installer) {
+          Write-Host "? Installer found: $($installer.Name)"
+          Write-Host "  Size: $([math]::Round($installer.Length / 1MB, 2)) MB"
+        } else {
+          Write-Error "? No installer found!"
+          exit 1
+        }
+
+    # Note: Actual installation test would require a clean VM
+    # This is a basic verification that the installer was built
