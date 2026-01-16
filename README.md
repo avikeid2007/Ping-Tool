@@ -1,5 +1,5 @@
 <h1 align="center">
-<img src="icon.png" alt="Ping Legacy" width="150">
+<img src="ScreenShot/logo.png" alt="Ping Legacy" width="150">
 <br/>
 Ping Legacy
 <br/>
@@ -55,9 +55,15 @@ Test your connection status and quality with ease.
 - **CommunityToolkit.Mvvm** - MVVM architecture
 - **SQLite** - Local data storage
 
-## 📸 Screenshot
+## 📸 Screenshots
 
-![Ping Legacy](https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/ping-legacy.png)
+| Main Ping | Multi-Ping Monitor |
+|-----------|--------------------|
+| ![Main](ScreenShot/Screenshot%202026-01-16%20142133.png) | ![Multi-Ping](ScreenShot/Screenshot%202026-01-16%20142206.png) |
+
+| Speed Test | History |
+|------------|--------|
+| ![Speed Test](ScreenShot/Screenshot%202026-01-16%20142244.png) | ![History](ScreenShot/Screenshot%202026-01-16%20142301.png) |
 
 ## 🚀 Getting Started
 
