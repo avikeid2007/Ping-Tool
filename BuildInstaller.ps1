@@ -14,6 +14,22 @@ $OutputDir = "Output\Publish"
 Write-Host "`nCleaning previous builds..." -ForegroundColor Cyan
 Remove-Item -Path $OutputDir -Recurse -Force -ErrorAction SilentlyContinue
 
+# Build the project first (without MSIX packaging)
+Write-Host "`nBuilding project for $Platform..." -ForegroundColor Cyan
+
+msbuild $ProjectPath `
+    /p:Configuration=$Configuration `
+    /p:Platform=$Platform `
+    /p:WindowsPackageType=None `
+    /p:AppxPackageSigningEnabled=false `
+    /p:GenerateAppxPackageOnBuild=false `
+    /t:Restore,Build
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "`nBuild failed!" -ForegroundColor Red
+    exit 1
+}
+
 # Publish the application (self-contained)
 Write-Host "`nPublishing self-contained application for $RuntimeIdentifier..." -ForegroundColor Cyan
 
@@ -21,10 +37,11 @@ dotnet publish $ProjectPath `
     -c $Configuration `
     -r $RuntimeIdentifier `
     --self-contained true `
-    -p:PublishSingleFile=false `
-    -p:PublishReadyToRun=true `
-    -p:PublishTrimmed=false `
-    -p:IncludeNativeLibrariesForSelfExtract=true `
+    /p:Platform=$Platform `
+    /p:WindowsPackageType=None `
+    /p:PublishSingleFile=false `
+    /p:PublishReadyToRun=true `
+    /p:PublishTrimmed=false `
     -o "$OutputDir\$RuntimeIdentifier"
 
 if ($LASTEXITCODE -ne 0) {

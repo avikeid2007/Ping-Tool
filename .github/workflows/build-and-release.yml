@@ -69,8 +69,21 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v2
+
     - name: Restore NuGet packages
       run: dotnet restore ${{ env.SOLUTION_PATH }}
+
+    - name: Build x64 Release
+      run: |
+        msbuild ${{ env.PROJECT_PATH }} `
+          /p:Configuration=Release `
+          /p:Platform=x64 `
+          /p:WindowsPackageType=None `
+          /p:AppxPackageSigningEnabled=false `
+          /p:GenerateAppxPackageOnBuild=false `
+          /t:Restore,Build
 
     - name: Publish x64
       run: |
@@ -78,9 +91,11 @@ jobs:
           -c Release `
           -r win-x64 `
           --self-contained true `
-          -p:PublishSingleFile=false `
-          -p:PublishReadyToRun=true `
-          -p:PublishTrimmed=false `
+          /p:Platform=x64 `
+          /p:WindowsPackageType=None `
+          /p:PublishSingleFile=false `
+          /p:PublishReadyToRun=true `
+          /p:PublishTrimmed=false `
           -o Output/Publish/win-x64
 
     - name: Setup Inno Setup
