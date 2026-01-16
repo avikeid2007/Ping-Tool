@@ -1,50 +1,137 @@
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 using PingTool.Helpers;
+using PingTool.Models;
+using PingTool.Services;
+using System.Collections.ObjectModel;
+using Windows.Storage.Pickers;
 
 namespace PingTool.Views;
 
 public sealed partial class HistoryPage : Page
 {
+    private HistoryType? _currentFilter;
+
+    public ObservableCollection<HistoryItem> FilteredHistory { get; } = new();
+
     public HistoryPage()
     {
         InitializeComponent();
+        HistoryService.Instance.HistoryChanged += OnHistoryChanged;
+        LoadHistory();
     }
 
-    protected override void OnNavigatedTo(NavigationEventArgs e)
+    private void OnHistoryChanged()
     {
-        base.OnNavigatedTo(e);
-        LoadHistory();
+        DispatcherQueue.TryEnqueue(() => LoadHistory());
     }
 
     private void LoadHistory()
     {
-        var history = SQLiteHelper.GetAllDistinct().ToList();
-        HistoryList.ItemsSource = history;
-        EmptyMessage.Visibility = history.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+        FilteredHistory.Clear();
+        var items = HistoryService.Instance.GetHistory(_currentFilter);
+        foreach (var item in items)
+        {
+            FilteredHistory.Add(item);
+        }
+        UpdateEmptyState();
     }
 
-    private async void ViewDetails_Click(object sender, RoutedEventArgs e)
+    private void UpdateEmptyState()
     {
-        if (sender is Button btn && btn.Tag is Guid pingId)
+        EmptyState.Visibility = FilteredHistory.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    private void Filter_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is RadioButton radio)
         {
-            var details = SQLiteHelper.GetAll(pingId).ToList();
-            var content = string.Join("\n", details.Select(d => d.Response));
-
-            var dialog = new ContentDialog
+            if (radio == AllFilter || radio.Tag == null)
             {
-                Title = "Ping Details",
-                Content = new ScrollViewer
+                _currentFilter = null;
+            }
+            else if (radio.Tag is string tag)
+            {
+                _currentFilter = tag switch
                 {
-                    Content = new TextBlock { Text = content, TextWrapping = TextWrapping.Wrap },
-                    MaxHeight = 400
-                },
-                CloseButtonText = "Close",
-                XamlRoot = this.XamlRoot
-            };
+                    "Ping" => HistoryType.Ping,
+                    "Traceroute" => HistoryType.Traceroute,
+                    "PortScan" => HistoryType.PortScan,
+                    "SpeedTest" => HistoryType.SpeedTest,
+                    _ => null
+                };
+            }
+            LoadHistory();
+        }
+    }
 
-            await dialog.ShowAsync();
+    private async void Export_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string id)
+        {
+            var item = FilteredHistory.FirstOrDefault(h => h.Id == id);
+            if (item != null)
+            {
+                var content = HistoryService.Instance.ExportToText(item);
+
+                try
+                {
+                    var picker = new FileSavePicker();
+                    picker.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+                    picker.FileTypeChoices.Add("Text File", new List<string> { ".txt" });
+                    picker.SuggestedFileName = $"{item.TypeDisplay}_{item.Target}_{item.Timestamp:yyyyMMdd_HHmmss}";
+
+                    var hwnd = WinRT.Interop.WindowNative.GetWindowHandle(App.MainWindow);
+                    WinRT.Interop.InitializeWithWindow.Initialize(picker, hwnd);
+
+                    var file = await picker.PickSaveFileAsync();
+                    if (file != null)
+                    {
+                        await Windows.Storage.FileIO.WriteTextAsync(file, content);
+                    }
+                }
+                catch
+                {
+                    // Fallback: copy to clipboard
+                    FileHelper.CopyText(content);
+                }
+            }
+        }
+    }
+
+    private void Delete_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is string id)
+        {
+            HistoryService.Instance.RemoveHistory(id);
+            var item = FilteredHistory.FirstOrDefault(h => h.Id == id);
+            if (item != null)
+            {
+                FilteredHistory.Remove(item);
+            }
+            UpdateEmptyState();
+        }
+    }
+
+    private async void ClearAll_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new ContentDialog
+        {
+            Title = "Clear History",
+            Content = _currentFilter.HasValue
+                ? $"Are you sure you want to clear all {_currentFilter} history?"
+                : "Are you sure you want to clear all history?",
+            PrimaryButtonText = "Clear",
+            CloseButtonText = "Cancel",
+            DefaultButton = ContentDialogButton.Close,
+            XamlRoot = this.XamlRoot
+        };
+
+        var result = await dialog.ShowAsync();
+        if (result == ContentDialogResult.Primary)
+        {
+            HistoryService.Instance.ClearHistory(_currentFilter);
+            LoadHistory();
         }
     }
 }
