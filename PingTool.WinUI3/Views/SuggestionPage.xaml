@@ -1,34 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Page
     x:Class="PingTool.Views.SuggestionPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid Padding="24">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Send Suggestion" Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,0,16" />
+        <!-- Header -->
+        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,0,0,20">
+            <Border
+                Width="40"
+                Height="40"
+                Background="{StaticResource AccentGradientBrush}"
+                CornerRadius="8">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                    FontSize="18"
+                    Foreground="White"
+                    Glyph="&#xE939;" />
+            </Border>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock
+                    FontSize="24"
+                    FontWeight="Bold"
+                    Text="Send Feedback" />
+                <TextBlock
+                    FontSize="12"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Submit a feature request or report a bug via GitHub" />
+            </StackPanel>
+        </StackPanel>
 
-        <TextBlock Grid.Row="1" Text="Have a feature request or found a bug? Let us know!" Margin="0,0,0,16" />
+        <!-- Feedback Type Selection -->
+        <StackPanel Grid.Row="1" Margin="0,0,0,16">
+            <TextBlock
+                FontSize="13"
+                FontWeight="SemiBold"
+                Margin="0,0,0,8"
+                Text="Feedback Type" />
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <RadioButton
+                    x:Name="FeatureRadio"
+                    Content="Feature Request"
+                    GroupName="FeedbackType"
+                    IsChecked="True" />
+                <RadioButton
+                    x:Name="BugRadio"
+                    Content="Bug Report"
+                    GroupName="FeedbackType" />
+                <RadioButton
+                    x:Name="QuestionRadio"
+                    Content="Question"
+                    GroupName="FeedbackType" />
+            </StackPanel>
+        </StackPanel>
 
-        <TextBox
-            x:Name="SuggestionText"
-            Grid.Row="2"
-            PlaceholderText="Enter your suggestion or feedback here..."
-            TextWrapping="Wrap"
-            AcceptsReturn="True"
-            MinHeight="200" />
+        <!-- Title -->
+        <StackPanel Grid.Row="2" Margin="0,0,0,16">
+            <TextBlock
+                FontSize="13"
+                FontWeight="SemiBold"
+                Margin="0,0,0,8"
+                Text="Title" />
+            <TextBox
+                x:Name="TitleText"
+                PlaceholderText="Brief summary of your feedback..." />
+        </StackPanel>
 
-        <Button
-            Grid.Row="3"
-            Content="Send Feedback"
-            HorizontalAlignment="Right"
-            Margin="0,16,0,0"
-            Style="{StaticResource AccentButtonStyle}"
-            Click="SendFeedback_Click" />
+        <!-- Description -->
+        <StackPanel Grid.Row="3">
+            <TextBlock
+                FontSize="13"
+                FontWeight="SemiBold"
+                Margin="0,0,0,8"
+                Text="Description" />
+            <TextBox
+                x:Name="DescriptionText"
+                PlaceholderText="Describe your suggestion or issue in detail..."
+                TextWrapping="Wrap"
+                AcceptsReturn="True"
+                MinHeight="180"
+                VerticalAlignment="Stretch" />
+        </StackPanel>
+
+        <!-- Actions -->
+        <Grid Grid.Row="4" Margin="0,20,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <CheckBox
+                x:Name="IncludeSystemInfo"
+                Content="Include system information"
+                IsChecked="True" />
+
+            <Button
+                Grid.Column="1"
+                Margin="8,0"
+                Click="CopyToClipboard_Click"
+                ToolTipService.ToolTip="Copy feedback to clipboard">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE8C8;" />
+                    <TextBlock Text="Copy" />
+                </StackPanel>
+            </Button>
+
+            <Button
+                Grid.Column="2"
+                Style="{StaticResource AccentButtonStyle}"
+                Click="OpenGitHubIssue_Click">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE774;" />
+                    <TextBlock Text="Open GitHub Issue" />
+                </StackPanel>
+            </Button>
+        </Grid>
     </Grid>
 </Page>

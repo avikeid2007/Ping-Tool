@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Ping Legacy</title>
+    <meta name="description" content="Privacy Policy for Ping Legacy - Modern Network Diagnostic Tool">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #7C3AED;
+            --secondary: #8B5CF6;
+            --bg-dark: #0F172A;
+            --bg-card: #1E293B;
+            --text: #F8FAFC;
+            --text-secondary: #94A3B8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+        }
+
+        .content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin: 32px 0 16px;
+            color: var(--secondary);
+        }
+
+        h2:first-child {
+            margin-top: 0;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        ul {
+            margin: 16px 0;
+            padding-left: 24px;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: var(--text);
+        }
+
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+        }
+
+        .back-link:hover {
+            color: var(--text);
+        }
+
+        .last-updated {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+            </svg>
+            Back to Home
+        </a>
+
+        <div class="header">
+            <img src="https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/icon.png" alt="Ping Legacy"
+                class="logo">
+            <h1>Privacy Policy</h1>
+            <p class="subtitle">Ping Legacy - Network Diagnostic Tool</p>
+        </div>
+
+        <div class="content">
+            <h2>Overview</h2>
+            <p>Ping Legacy ("the App") is committed to protecting your privacy. This Privacy Policy explains how we
+                handle information when you use our application.</p>
+
+            <h2>Data Collection</h2>
+            <p><strong>We do not collect any personal data.</strong> The App operates entirely on your local device and
+                does not transmit any personal information to external servers.</p>
+
+            <h2>Information Stored Locally</h2>
+            <p>The App stores the following data locally on your device:</p>
+            <ul>
+                <li><strong>Ping History:</strong> Records of your ping sessions including target hosts, timestamps, and
+                    results</li>
+                <li><strong>Settings:</strong> Your preferences such as theme selection and notification settings</li>
+                <li><strong>Favorites:</strong> Your saved favorite hosts for quick access</li>
+                <li><strong>Scheduled Tasks:</strong> Your configured scheduled ping tasks</li>
+            </ul>
+            <p>This data is stored locally using SQLite database and Windows settings storage. It never leaves your
+                device.</p>
+
+            <h2>Network Requests</h2>
+            <p>The App makes the following network requests:</p>
+            <ul>
+                <li><strong>ICMP Ping:</strong> Sends ping requests to hosts you specify</li>
+                <li><strong>DNS Lookup:</strong> Resolves hostnames using your system's DNS</li>
+                <li><strong>Public IP:</strong> Fetches your public IP from ip-api.com (optional)</li>
+                <li><strong>Speed Test:</strong> Downloads/uploads test data to measure connection speed</li>
+                <li><strong>Traceroute:</strong> Traces network path to specified hosts</li>
+                <li><strong>Port Scan:</strong> Checks port connectivity on hosts you specify</li>
+            </ul>
+            <p>These requests are initiated only when you explicitly use these features.</p>
+
+            <h2>Third-Party Services</h2>
+            <p>The App uses minimal third-party services:</p>
+            <ul>
+                <li><strong>ip-api.com:</strong> Used to fetch your public IP address (no personal data sent)</li>
+                <li><strong>Speed test servers:</strong> Used for measuring internet speed</li>
+            </ul>
+
+            <h2>Data Retention</h2>
+            <p>History data is automatically deleted based on your configured retention period (default: 15 days). You
+                can also manually clear all data at any time through the Settings page.</p>
+
+            <h2>Children's Privacy</h2>
+            <p>The App does not knowingly collect any information from children under 13 years of age.</p>
+
+            <h2>Changes to This Policy</h2>
+            <p>We may update this Privacy Policy from time to time. Any changes will be reflected on this page with an
+                updated revision date.</p>
+
+            <h2>Contact</h2>
+            <p>If you have any questions about this Privacy Policy, please contact us:</p>
+            <ul>
+                <li>GitHub: <a href="https://github.com/avikeid2007/Ping-Tool/issues">Open an Issue</a></li>
+                <li>Website: <a href="http://avnishkumar.co.in">avnishkumar.co.in</a></li>
+                <li>Twitter: <a href="https://twitter.com/avikeid2007">@avikeid2007</a></li>
+            </ul>
+
+            <div class="last-updated">
+                Last updated: January 16, 2026
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 Ping Legacy. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+
+</html>

@@ -16,6 +16,7 @@ public partial class MainViewModel : ObservableObject
 {
     private readonly PingService _pingService = new();
     private readonly Microsoft.UI.Dispatching.DispatcherQueue _dispatcherQueue = Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread();
+    private System.Threading.Timer? _dataRefreshTimer;
 
     private CancellationTokenSource? _pingCts;
     private Guid _pingId;
@@ -28,11 +29,20 @@ public partial class MainViewModel : ObservableObject
     private readonly List<long> _successfulPingTimes = new();
     private int _totalPings;
     private int _failedPings;
+    private int _consecutiveFailures;
+    private const int FailureThreshold = 3;
+    private bool _notificationShown;
 
     #region Network Properties
 
     [ObservableProperty]
     private string _ipAddress = string.Empty;
+
+    [ObservableProperty]
+    private string _ipv6Address = string.Empty;
+
+    [ObservableProperty]
+    private string _publicIp = string.Empty;
 
     [ObservableProperty]
     private string _profileName = string.Empty;
@@ -119,6 +129,21 @@ public partial class MainViewModel : ObservableObject
 
     #endregion
 
+    #region DNS Lookup Properties
+
+    private readonly DnsLookupService _dnsLookupService = new();
+
+    [ObservableProperty]
+    private string _dnsLookupHost = string.Empty;
+
+    [ObservableProperty]
+    private DnsLookupResult? _dnsResult;
+
+    [ObservableProperty]
+    private bool _isDnsLookupRunning;
+
+    #endregion
+
     public async Task InitializeAsync()
     {
         // Load saved host address
@@ -135,12 +160,59 @@ public partial class MainViewModel : ObservableObject
         var isPingAutoStart = SettingsHelper.Read<bool?>("IsPingAutoStart") ?? true;
 
         await SetNetworkInfoAsync();
-        NetworkInformation.NetworkStatusChanged += async _ => await SetNetworkInfoAsync();
+        _ = FetchPublicIpAsync(); // Fire and forget - don't wait for this
+        NetworkInformation.NetworkStatusChanged += async _ =>
+        {
+            await SetNetworkInfoAsync();
+            _ = FetchPublicIpAsync();
+        };
+
+        // Start data usage auto-refresh timer (every 2 seconds)
+        _dataRefreshTimer = new System.Threading.Timer(
+            async _ => await RefreshDataUsageAsync(),
+            null,
+            TimeSpan.FromSeconds(2),
+            TimeSpan.FromSeconds(2));
 
         if (isPingAutoStart)
         {
             await Task.Delay(2000);
             await StartPingAsync();
+        }
+    }
+
+    private async Task FetchPublicIpAsync()
+    {
+        try
+        {
+            using var httpClient = new System.Net.Http.HttpClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
+            var publicIp = await httpClient.GetStringAsync("https://api.ipify.org");
+            _dispatcherQueue.TryEnqueue(() => PublicIp = publicIp.Trim());
+        }
+        catch
+        {
+            _dispatcherQueue.TryEnqueue(() => PublicIp = "N/A");
+        }
+    }
+
+    private async Task RefreshDataUsageAsync()
+    {
+        try
+        {
+            if (SelectedLocalLAN != null)
+            {
+                var ipStats = SelectedLocalLAN.GetIPStatistics();
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    TotalReceivedBytes = ipStats.BytesReceived / 1048576;
+                    TotalSentBytes = ipStats.BytesSent / 1048576;
+                });
+            }
+        }
+        catch
+        {
+            // Ignore refresh errors
         }
     }
 
@@ -196,11 +268,44 @@ public partial class MainViewModel : ObservableObject
         }
         else
         {
-            // Stop ping
+            // Stop ping and save to history
             _pingCts?.Cancel();
             _pingService.Stop();
+
+            // Save ping session to history
+            SavePingToHistory();
+
             IsPingStarted = false;
         }
+    }
+
+    private void SavePingToHistory()
+    {
+        if (_totalPings == 0) return;
+
+        var host = HostNameOrAddress?.Replace("http://", "").Replace("https://", "").TrimEnd('/') ?? "";
+        var firstPing = PingCollection.FirstOrDefault();
+        var domainName = host != firstPing?.IpAddress ? host : null;
+
+        var historyItem = new HistoryItem
+        {
+            Type = HistoryType.Ping,
+            Target = firstPing?.IpAddress ?? host,
+            DomainName = domainName,
+            IsSuccess = SuccessCount > 0,
+            PingCount = _totalPings,
+            AvgLatency = (long)AvgPing,
+            PacketLoss = PacketLoss,
+            Summary = $"{_totalPings} pings, Avg: {AvgPing:F0}ms, Loss: {PacketLoss:F1}%",
+            Details = $"Target: {host}\n" +
+                     $"IP: {firstPing?.IpAddress}\n" +
+                     $"Total Pings: {_totalPings}\n" +
+                     $"Success: {SuccessCount}, Failed: {FailCount}\n" +
+                     $"Min: {MinPing}ms, Max: {MaxPing}ms, Avg: {AvgPing:F1}ms\n" +
+                     $"Packet Loss: {PacketLoss:F1}%"
+        };
+
+        HistoryService.Instance.AddHistory(historyItem);
     }
 
     [RelayCommand]
@@ -216,6 +321,58 @@ public partial class MainViewModel : ObservableObject
     {
         FileHelper.CopyText(IpAddress);
     }
+
+    [RelayCommand]
+    private void CopyPublicIp()
+    {
+        if (!string.IsNullOrEmpty(PublicIp) && PublicIp != "N/A")
+        {
+            FileHelper.CopyText(PublicIp);
+        }
+    }
+
+    #endregion
+
+    #region DNS Lookup Commands
+
+    [RelayCommand]
+    private async Task DnsLookupAsync()
+    {
+        if (string.IsNullOrWhiteSpace(DnsLookupHost))
+        {
+            // Use current ping host if DNS host is empty
+            DnsLookupHost = HostNameOrAddress;
+        }
+
+        if (string.IsNullOrWhiteSpace(DnsLookupHost)) return;
+
+        IsDnsLookupRunning = true;
+        try
+        {
+            DnsResult = await _dnsLookupService.LookupAsync(DnsLookupHost.Trim());
+        }
+        finally
+        {
+            IsDnsLookupRunning = false;
+        }
+    }
+
+    [RelayCommand]
+    private void CopyDnsResult()
+    {
+        if (DnsResult?.IsSuccess == true)
+        {
+            var text = $"Hostname: {DnsResult.Hostname}\n" +
+                      $"Canonical: {DnsResult.CanonicalName}\n" +
+                      $"IPv4: {string.Join(", ", DnsResult.IPv4Addresses)}\n" +
+                      $"IPv6: {string.Join(", ", DnsResult.IPv6Addresses)}";
+            FileHelper.CopyText(text);
+        }
+    }
+
+    #endregion
+
+    #region Export Commands
 
     [RelayCommand]
     private async Task ExportAsync()
@@ -367,6 +524,10 @@ public partial class MainViewModel : ObservableObject
             _successfulPingTimes.Add(result.Time);
             SuccessCount++;
 
+            // Reset consecutive failures on success
+            _consecutiveFailures = 0;
+            _notificationShown = false;
+
             MinPing = _successfulPingTimes.Min();
             MaxPing = _successfulPingTimes.Max();
             AvgPing = _successfulPingTimes.Average();
@@ -382,6 +543,14 @@ public partial class MainViewModel : ObservableObject
         {
             _failedPings++;
             FailCount++;
+            _consecutiveFailures++;
+
+            // Show notification on connection drop (3+ consecutive failures)
+            if (_consecutiveFailures >= FailureThreshold && !_notificationShown)
+            {
+                ShowConnectionDropNotification();
+                _notificationShown = true;
+            }
 
             // Add a spike value for failed pings in chart
             ChartValues.Add(-1);
@@ -392,6 +561,31 @@ public partial class MainViewModel : ObservableObject
         }
 
         PacketLoss = _totalPings > 0 ? (double)_failedPings / _totalPings * 100 : 0;
+    }
+
+    private void ShowConnectionDropNotification()
+    {
+        try
+        {
+            var toastXml = new Windows.Data.Xml.Dom.XmlDocument();
+            toastXml.LoadXml($@"
+                <toast>
+                    <visual>
+                        <binding template='ToastGeneric'>
+                            <text>Connection Lost</text>
+                            <text>Unable to reach {HostNameOrAddress} - {_consecutiveFailures} consecutive failures</text>
+                        </binding>
+                    </visual>
+                    <audio src='ms-winsoundevent:Notification.Default' />
+                </toast>");
+
+            var toast = new Windows.UI.Notifications.ToastNotification(toastXml);
+            Windows.UI.Notifications.ToastNotificationManager.CreateToastNotifier("Ping Legacy").Show(toast);
+        }
+        catch
+        {
+            // Ignore notification errors
+        }
     }
 
     #endregion
@@ -416,9 +610,17 @@ public partial class MainViewModel : ObservableObject
             }
 
             var hasInternet = icp.GetNetworkConnectivityLevel() >= NetworkConnectivityLevel.InternetAccess;
-            var hostname = NetworkInformation.GetHostNames()
-                .FirstOrDefault(hn => hn.IPInformation?.NetworkAdapter != null
-                    && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId);
+
+            // Get all hostnames for this network adapter
+            var hostnames = NetworkInformation.GetHostNames()
+                .Where(hn => hn.IPInformation?.NetworkAdapter != null
+                    && hn.IPInformation.NetworkAdapter.NetworkAdapterId == icp.NetworkAdapter.NetworkAdapterId)
+                .ToList();
+
+            // Find IPv4 and IPv6 addresses
+            var ipv4Host = hostnames.FirstOrDefault(hn => hn.Type == Windows.Networking.HostNameType.Ipv4);
+            var ipv6Host = hostnames.FirstOrDefault(hn => hn.Type == Windows.Networking.HostNameType.Ipv6);
+            var hostname = ipv4Host ?? ipv6Host ?? hostnames.FirstOrDefault();
 
             if (hostname != null)
             {
@@ -428,7 +630,8 @@ public partial class MainViewModel : ObservableObject
                 {
                     HasInternetAccess = hasInternet;
                     SelectedLocalLAN = LocalLANCollection.FirstOrDefault(x => x.Id.ToUpper() == currentNetworkId);
-                    IpAddress = hostname.CanonicalName;
+                    IpAddress = ipv4Host?.CanonicalName ?? hostname.CanonicalName;
+                    Ipv6Address = ipv6Host?.CanonicalName ?? string.Empty;
                     IpType = hostname.Type.ToString();
                     ProfileName = icp.ProfileName;
                     IsWlan = icp.IsWlanConnectionProfile;

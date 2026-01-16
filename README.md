@@ -1,5 +1,5 @@
 <h1 align="center">
-<img src="https://raw.githubusercontent.com/avikeid2007/Ping-Tool/master/ScreenShot/logo.png" alt="Ping Legacy" width="200">
+<img src="icon.png" alt="Ping Legacy" width="150">
 <br/>
 Ping Legacy
 <br/>
@@ -18,14 +18,24 @@ Test your connection status and quality with ease.
 | Feature | Description |
 |---------|-------------|
 | 🌐 **Live Ping Testing** | Continuous ICMP ping to any host with real-time results |
+| 🎯 **Multi-Ping Monitor** | Ping up to 8 targets simultaneously with live dashboard |
 | 📊 **Statistics** | Min/Max/Avg latency, packet loss percentage |
 | 📈 **Real-time Graph** | Visual latency chart showing ping trends |
 | ⭐ **Favorites** | Quick access to frequently pinged hosts |
 | 🌙 **Dark/Light Theme** | System-aware theming support |
 | 📁 **Export** | Save ping results to text file with statistics |
-| 🔌 **Network Info** | IP address, profile, data usage, adapters list |
-| 📜 **History** | View past ping sessions |
-| 📉 **Data Usage** | Track network data consumption |
+| 🔌 **Network Info** | IPv4, IPv6, Public IP, profile, adapters |
+| 🌍 **Public IP** | Auto-fetch external IP with copy support |
+| 🔍 **DNS Lookup** | Resolve hostnames and display IP records |
+| 🔔 **Drop Notifications** | Windows toast alerts on connection loss |
+| 🛤️ **Traceroute** | Trace hop-by-hop path to any destination |
+| 🔐 **Port Scanner** | Check open ports with legal authorization |
+| ⏰ **Scheduled Pings** | Monitor hosts at regular intervals |
+| 🚀 **Speed Test** | Test download, upload speeds and latency |
+| 📜 **Unified History** | View all operations with filtering & export |
+| 📉 **Network Statistics** | Track network data usage with connection info |
+| 🗑️ **Auto Cleanup** | Configurable history retention (default 15 days) |
+| 💬 **GitHub Feedback** | Submit suggestions directly to GitHub Issues |
 
 ## ⌨️ Keyboard Shortcuts
 
@@ -34,7 +44,7 @@ Test your connection status and quality with ease.
 | `F5` | Start ping |
 | `Esc` | Stop ping |
 | `Ctrl+E` | Export results |
-| `Ctrl+D` | Clear results |
+| `Ctrl+Delete` | Clear results |
 | `Ctrl+F` | Add to favorites |
 
 ## 🛠️ Tech Stack
