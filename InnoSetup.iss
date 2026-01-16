@@ -24,7 +24,7 @@ LicenseFile=LICENSE
 ; Output Configuration
 OutputDir=Output\Installer
 OutputBaseFilename=PingLegacy-{#MyAppVersion}-Setup
-SetupIconFile=PingTool.WinUI3\Assets\Logo.ico
+; SetupIconFile=PingTool.WinUI3\Assets\Logo.png
 UninstallDisplayIcon={app}\{#MyAppExeName}
 Compression=lzma2/max
 SolidCompression=yes
@@ -56,10 +56,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-; Application Files (x64)
-Source: "PingTool.WinUI3\bin\x64\Release\net8.0-windows10.0.19041.0\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: Is64BitInstallMode
-; Include all assets
-Source: "PingTool.WinUI3\Assets\*"; DestDir: "{app}\Assets"; Flags: ignoreversion recursesubdirs createallsubdirs
+; Application Files (x64) - from publish output
+Source: "Output\Publish\win-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Check: Is64BitInstallMode
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
@@ -79,6 +77,8 @@ begin
 end;
 
 function InitializeSetup: Boolean;
+var
+  ResultCode: Integer;
 begin
   Result := True;
   
