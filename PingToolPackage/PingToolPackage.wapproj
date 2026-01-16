@@ -55,15 +55,15 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <EntryPointProjectUniqueName>..\PingTool\PingTool.csproj</EntryPointProjectUniqueName>
+    <EntryPointProjectUniqueName>..\PingTool.WinUI3\PingTool.WinUI3.csproj</EntryPointProjectUniqueName>
     <PackageCertificateKeyFile>PingToolPackage_TemporaryKey.pfx</PackageCertificateKeyFile>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundlePlatforms>x86</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|ARM64</AppxBundlePlatforms>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <AppxPackageDir>C:\Users\avnish.GENINF\source\repos\Ping-Tool\PingToolPackage\AppPackages\submission3</AppxPackageDir>
+    <AppxPackageDir>C:\Users\User\source\repos\avikeid2007\Ping-Tool\PingToolPackage\AppPackages\</AppxPackageDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <AppxBundle>Always</AppxBundle>
@@ -156,10 +156,7 @@
     <None Include="PingToolPackage_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PingBackground\PingBackground.csproj">
-      <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
-    </ProjectReference>
-    <ProjectReference Include="..\PingTool\PingTool.csproj" />
+    <ProjectReference Include="..\PingTool.WinUI3\PingTool.WinUI3.csproj" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
 </Project>
