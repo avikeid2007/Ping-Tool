@@ -11,6 +11,9 @@ public class HistoryService
     public static HistoryService Instance => _instance.Value;
 
     private const int MaxHistoryItems = 500;
+    private const string RetentionDaysKey = "HistoryRetentionDays";
+    private const int DefaultRetentionDays = 15;
+    
     private readonly List<HistoryItem> _history = new();
     private readonly object _lock = new();
 
@@ -18,9 +21,29 @@ public class HistoryService
 
     public IReadOnlyList<HistoryItem> History => _history.AsReadOnly();
 
+    public static int RetentionDays
+    {
+        get => SettingsHelper.Read<int?>(RetentionDaysKey) ?? DefaultRetentionDays;
+        set => SettingsHelper.Save(RetentionDaysKey, value);
+    }
+
     private HistoryService()
     {
         LoadHistory();
+        CleanupExpiredHistory();
+    }
+
+    private void CleanupExpiredHistory()
+    {
+        lock (_lock)
+        {
+            var cutoffDate = DateTime.Now.AddDays(-RetentionDays);
+            var removed = _history.RemoveAll(h => h.Timestamp < cutoffDate);
+            if (removed > 0)
+            {
+                SaveHistory();
+            }
+        }
     }
 
     public void AddHistory(HistoryItem item)

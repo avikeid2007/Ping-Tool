@@ -47,6 +47,9 @@ public sealed partial class SettingsPage : Page
             VersionText.Text = $"Version {version.Major}.{version.Minor}.{version.Build}";
         }
         catch { }
+
+        // Set retention days
+        RetentionDaysBox.Value = HistoryService.RetentionDays;
     }
 
     private void ThemeRadio_Checked(object sender, RoutedEventArgs e)
@@ -68,6 +71,14 @@ public sealed partial class SettingsPage : Page
     private void NotificationToggle_Toggled(object sender, RoutedEventArgs e)
     {
         SettingsHelper.Save("NotificationsEnabled", NotificationToggle.IsOn);
+    }
+
+    private void RetentionDaysBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+    {
+        if (!double.IsNaN(args.NewValue))
+        {
+            HistoryService.RetentionDays = (int)args.NewValue;
+        }
     }
 
     private async void ClearHistory_Click(object sender, RoutedEventArgs e)

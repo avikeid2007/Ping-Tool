@@ -18,6 +18,7 @@ Test your connection status and quality with ease.
 | Feature | Description |
 |---------|-------------|
 | 🌐 **Live Ping Testing** | Continuous ICMP ping to any host with real-time results |
+| 🎯 **Multi-Ping Monitor** | Ping up to 8 targets simultaneously with live dashboard |
 | 📊 **Statistics** | Min/Max/Avg latency, packet loss percentage |
 | 📈 **Real-time Graph** | Visual latency chart showing ping trends |
 | ⭐ **Favorites** | Quick access to frequently pinged hosts |
@@ -31,8 +32,10 @@ Test your connection status and quality with ease.
 | 🔐 **Port Scanner** | Check open ports with legal authorization |
 | ⏰ **Scheduled Pings** | Monitor hosts at regular intervals |
 | 🚀 **Speed Test** | Test download, upload speeds and latency |
-| 📜 **History** | View past ping sessions |
-| 📉 **Data Usage** | Track network data consumption (auto-refresh) |
+| 📜 **Unified History** | View all operations with filtering & export |
+| 📉 **Network Statistics** | Track network data usage with connection info |
+| 🗑️ **Auto Cleanup** | Configurable history retention (default 15 days) |
+| 💬 **GitHub Feedback** | Submit suggestions directly to GitHub Issues |
 
 ## ⌨️ Keyboard Shortcuts
 
@@ -41,7 +44,7 @@ Test your connection status and quality with ease.
 | `F5` | Start ping |
 | `Esc` | Stop ping |
 | `Ctrl+E` | Export results |
-| `Ctrl+D` | Clear results |
+| `Ctrl+Delete` | Clear results |
 | `Ctrl+F` | Add to favorites |
 
 ## 🛠️ Tech Stack

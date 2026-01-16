@@ -5,7 +5,8 @@ public enum HistoryType
     Ping,
     Traceroute,
     PortScan,
-    SpeedTest
+    SpeedTest,
+    MultiPing
 }
 
 public class HistoryItem
@@ -43,6 +44,7 @@ public class HistoryItem
         HistoryType.Traceroute => "\uE8F1",
         HistoryType.PortScan => "\uE946",
         HistoryType.SpeedTest => "\uE8B0",
+        HistoryType.MultiPing => "\uF0E2",
         _ => "\uE946"
     };
 
@@ -52,6 +54,7 @@ public class HistoryItem
         HistoryType.Traceroute => "Traceroute",
         HistoryType.PortScan => "Port Scan",
         HistoryType.SpeedTest => "Speed Test",
+        HistoryType.MultiPing => "Multi-Ping",
         _ => "Unknown"
     };
 

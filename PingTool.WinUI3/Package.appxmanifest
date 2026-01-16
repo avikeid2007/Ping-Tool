@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="66236462-2A3D-46E5-A9B4-E0FB67876378"
-    Publisher="CN=avnish"
-    Version="2.0.0.0" />
+    Name="34488AvnishKumar.PingLegacy"
+    Publisher="CN=1494B4FB-4349-4083-8AFA-16D2A64B8D99"
+    Version="0.0.1.0" />
 
-  <mp:PhoneIdentity PhoneProductId="66236462-2A3D-46E5-A9B4-E0FB67876378" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="47951041-7215-498c-bc16-5264b20c26cf" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Ping Legacy</DisplayName>
-    <PublisherDisplayName>avnish</PublisherDisplayName>
+    <PublisherDisplayName>Avnish Kumar</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

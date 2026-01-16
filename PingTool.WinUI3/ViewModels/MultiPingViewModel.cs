@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PingTool.Models;
+using PingTool.Services;
 using System.Collections.ObjectModel;
 using System.Net.NetworkInformation;
 
@@ -119,8 +120,33 @@ public partial class MultiPingViewModel : ObservableObject
             cts.Cancel();
             _pingCts.Remove(target.Hostname);
         }
+        
+        // Save history if there were any pings
+        if (target.SuccessCount + target.FailCount > 0)
+        {
+            SaveTargetHistory(target);
+        }
+        
         target.IsActive = false;
         target.Status = PingStatus.Idle;
+    }
+
+    private void SaveTargetHistory(PingTarget target)
+    {
+        var historyItem = new HistoryItem
+        {
+            Type = HistoryType.MultiPing,
+            Target = target.IpAddress,
+            DomainName = target.Hostname != target.IpAddress ? target.Hostname : null,
+            IsSuccess = target.FailCount == 0,
+            Summary = $"Avg: {target.AvgPing:F0}ms, Loss: {target.PacketLoss:F1}%",
+            AvgLatency = (long)target.AvgPing,
+            PacketLoss = target.PacketLoss,
+            PingCount = target.SuccessCount + target.FailCount,
+            Details = $"Min: {(target.MinPing == long.MaxValue ? 0 : target.MinPing)}ms, Max: {target.MaxPing}ms, Sent: {target.SuccessCount + target.FailCount}, Received: {target.SuccessCount}"
+        };
+        
+        HistoryService.Instance.AddHistory(historyItem);
     }
 
     private async Task PingLoopAsync(PingTarget target, CancellationToken token)
