@@ -1,95 +1,186 @@
-<h1 align="center">
-<img src="ScreenShot/logo.png" alt="Ping Legacy" width="150">
-<br/>
-Ping Legacy
-<br/>
-<a href='https://www.microsoft.com/store/apps/9P1KVKT59T2M'><img src='https://raw.githubusercontent.com/avikeid2007/WinDev-Utility/dev/ScreenShots/store.png' alt='Get it on Microsoft Store' width="150" /></a>
-</h1>
+<div align="center">
 
-<p align="center">
-<b>A modern network diagnostic tool for Windows</b><br/>
-Test your connection status and quality with ease.
-</p>
+<img src="ScreenShot/logo.png" alt="Ping Legacy Logo" width="120" />
+
+# Ping Legacy
+
+### 🌐 Modern Network Diagnostic Tool for Windows
+
+[![Microsoft Store](https://img.shields.io/badge/Microsoft%20Store-Download-blue?style=for-the-badge&logo=microsoft)](https://www.microsoft.com/store/apps/9P1KVKT59T2M)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010+-0078D4?style=for-the-badge&logo=windows11)](https://www.microsoft.com/windows)
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet)](https://dotnet.microsoft.com/)
+
+**Test your connection status and quality with ease.**  
+*Real-time ping monitoring • Multi-host dashboard • Speed testing • Network diagnostics*
+
+[<img src="https://raw.githubusercontent.com/avikeid2007/WinDev-Utility/dev/ScreenShots/store.png" alt="Get it on Microsoft Store" width="180" />](https://www.microsoft.com/store/apps/9P1KVKT59T2M)
+
+</div>
 
 ---
 
 ## ✨ Features
 
+<table>
+<tr>
+<td width="50%">
+
+### 📡 Core Networking
+
 | Feature | Description |
-|---------|-------------|
-| 🌐 **Live Ping Testing** | Continuous ICMP ping to any host with real-time results |
-| 🎯 **Multi-Ping Monitor** | Ping up to 8 targets simultaneously with live dashboard |
-| 📊 **Statistics** | Min/Max/Avg latency, packet loss percentage |
-| 📈 **Real-time Graph** | Visual latency chart showing ping trends |
-| ⭐ **Favorites** | Quick access to frequently pinged hosts |
-| 🌙 **Dark/Light Theme** | System-aware theming support |
-| 📁 **Export** | Save ping results to text file with statistics |
-| 🔌 **Network Info** | IPv4, IPv6, Public IP, profile, adapters |
-| 🌍 **Public IP** | Auto-fetch external IP with copy support |
-| 🔍 **DNS Lookup** | Resolve hostnames and display IP records |
-| 🔔 **Drop Notifications** | Windows toast alerts on connection loss |
-| 🛤️ **Traceroute** | Trace hop-by-hop path to any destination |
-| 🔐 **Port Scanner** | Check open ports with legal authorization |
-| ⏰ **Scheduled Pings** | Monitor hosts at regular intervals |
-| 🚀 **Speed Test** | Test download, upload speeds and latency |
-| 📜 **Unified History** | View all operations with filtering & export |
-| 📉 **Network Statistics** | Track network data usage with connection info |
-| 🗑️ **Auto Cleanup** | Configurable history retention (default 15 days) |
-| 💬 **GitHub Feedback** | Submit suggestions directly to GitHub Issues |
+|:--------|:------------|
+| 🌐 **Live Ping Testing** | Continuous ICMP ping with real-time results |
+| 🎯 **Multi-Ping Monitor** | Monitor up to 8 targets simultaneously |
+| 📊 **Statistics** | Min/Max/Avg latency & packet loss |
+| 📈 **Real-time Graph** | Visual latency trends |
 
-## ⌨️ Keyboard Shortcuts
+</td>
+<td width="50%">
 
-| Shortcut | Action |
-|----------|--------|
-| `F5` | Start ping |
-| `Esc` | Stop ping |
-| `Ctrl+E` | Export results |
-| `Ctrl+Delete` | Clear results |
-| `Ctrl+F` | Add to favorites |
+### 🔧 Advanced Tools
 
-## 🛠️ Tech Stack
+| Feature | Description |
+|:--------|:------------|
+| 🛤️ **Traceroute** | Hop-by-hop path tracing |
+| � **DNS Lookup** | Hostname resolution & IP records |
+| � **Port Scanner** | Open port detection |
+| 🚀 **Speed Test** | Download, upload & latency testing |
 
-- **WinUI 3** - Modern Windows UI framework
-- **Windows App SDK 1.5** - Latest Windows development platform
-- **.NET 8** - Cross-platform runtime
-- **CommunityToolkit.Mvvm** - MVVM architecture
-- **SQLite** - Local data storage
+</td>
+</tr>
+<tr>
+<td width="50%">
 
-## 📸 Screenshots
+### 🔔 Monitoring & Alerts
 
-| Main Ping | Multi-Ping Monitor |
-|-----------|--------------------|
-| ![Main](ScreenShot/Screenshot%202026-01-16%20142133.png) | ![Multi-Ping](ScreenShot/Screenshot%202026-01-16%20142206.png) |
+| Feature | Description |
+|:--------|:------------|
+| ⏰ **Scheduled Pings** | Regular interval monitoring |
+| 🔔 **Drop Notifications** | Toast alerts on connection loss |
+| � **Network Statistics** | Track data usage & connection info |
+| � **Unified History** | Filter & export all operations |
 
-| Speed Test | History |
-|------------|--------|
-| ![Speed Test](ScreenShot/Screenshot%202026-01-16%20142244.png) | ![History](ScreenShot/Screenshot%202026-01-16%20142301.png) |
+</td>
+<td width="50%">
 
-## 🚀 Getting Started
+### 🎨 User Experience
 
-### Prerequisites
+| Feature | Description |
+|:--------|:------------|
+| ⭐ **Favorites** | Quick access to frequent hosts |
+| 🌙 **Dark/Light Theme** | System-aware theming |
+| � **Export** | Save results with statistics |
+| 🗑️ **Auto Cleanup** | Configurable history retention |
 
-- Windows 10 version 1809 or later
-- Visual Studio 2022 with Windows App SDK workload
-
-### Build
-
-```bash
-git clone https://github.com/avikeid2007/Ping-Tool.git
-cd Ping-Tool
-dotnet build PingTool.WinUI3.sln -c Release -p:Platform=x64
-```
-
-### Run
-
-Open `PingTool.WinUI3.sln` in Visual Studio and press F5.
-
-## 📄 License
-
-MIT
+</td>
+</tr>
+</table>
 
 ---
 
-> [avnishkumar.co.in](http://avnishkumar.co.in) &nbsp;·&nbsp;
-> GitHub [@avikeid2007](https://github.com/avikeid2007) &nbsp;·&nbsp;
-> Twitter [@avikeid2007](https://twitter.com/avikeid2007)
+## 📸 Screenshots
+
+<div align="center">
+
+| Main Ping Interface | Multi-Ping Monitor |
+|:-------------------:|:------------------:|
+| <img src="ScreenShot/Screenshot%202026-01-16%20142133.png" width="400" alt="Main Ping Interface" /> | <img src="ScreenShot/Screenshot%202026-01-16%20142206.png" width="400" alt="Multi-Ping Monitor" /> |
+
+| Speed Test | History View |
+|:----------:|:------------:|
+| <img src="ScreenShot/Screenshot%202026-01-16%20142244.png" width="400" alt="Speed Test" /> | <img src="ScreenShot/Screenshot%202026-01-16%20142301.png" width="400" alt="History View" /> |
+
+</div>
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+<div align="center">
+
+| Shortcut | Action |
+|:--------:|:-------|
+| <kbd>F5</kbd> | Start ping |
+| <kbd>Esc</kbd> | Stop ping |
+| <kbd>Ctrl</kbd> + <kbd>E</kbd> | Export results |
+| <kbd>Ctrl</kbd> + <kbd>Delete</kbd> | Clear results |
+| <kbd>Ctrl</kbd> + <kbd>F</kbd> | Add to favorites |
+
+</div>
+
+---
+
+## 🛠️ Tech Stack
+
+<div align="center">
+
+| Technology | Description |
+|:----------:|:------------|
+| <img src="https://img.shields.io/badge/WinUI%203-5C2D91?style=flat-square&logo=windows&logoColor=white" /> | Modern Windows UI framework |
+| <img src="https://img.shields.io/badge/Windows%20App%20SDK%201.5-0078D4?style=flat-square&logo=windows11&logoColor=white" /> | Latest Windows development platform |
+| <img src="https://img.shields.io/badge/.NET%208-512BD4?style=flat-square&logo=dotnet&logoColor=white" /> | Cross-platform runtime |
+| <img src="https://img.shields.io/badge/CommunityToolkit.Mvvm-68217A?style=flat-square&logo=nuget&logoColor=white" /> | MVVM architecture |
+| <img src="https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white" /> | Local data storage |
+
+</div>
+
+---
+
+## 🚀 Getting Started
+
+<details>
+<summary><strong>📋 Prerequisites</strong></summary>
+
+- **Windows 10** version 1809 or later
+- **Visual Studio 2022** with Windows App SDK workload
+- **.NET 8 SDK**
+
+</details>
+
+<details>
+<summary><strong>🔨 Build from Source</strong></summary>
+
+```bash
+# Clone the repository
+git clone https://github.com/avikeid2007/Ping-Tool.git
+
+# Navigate to project directory
+cd Ping-Tool
+
+# Build the solution
+dotnet build PingTool.WinUI3.sln -c Release -p:Platform=x64
+```
+
+</details>
+
+<details>
+<summary><strong>▶️ Run the Application</strong></summary>
+
+1. Open `PingTool.WinUI3.sln` in **Visual Studio 2022**
+2. Set `PingTool.WinUI3` as the startup project
+3. Press <kbd>F5</kbd> to build and run
+
+</details>
+
+---
+
+## 📄 License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+### 🌟 Connect with the Developer
+
+[![Website](https://img.shields.io/badge/Website-avnishkumar.co.in-FF5722?style=for-the-badge&logo=google-chrome&logoColor=white)](http://avnishkumar.co.in)
+[![GitHub](https://img.shields.io/badge/GitHub-@avikeid2007-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/avikeid2007)
+[![Twitter](https://img.shields.io/badge/Twitter-@avikeid2007-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/avikeid2007)
+
+---
+
+<sub>Made with ❤️ for the Windows community</sub>
+
+</div>
